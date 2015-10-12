@@ -12,7 +12,7 @@ EXPECTED_ARGS=0
 SOURCE="/full/path/to/source/folder/"
 TARGET="/full/path/to/target/folder/"
 
-# Check if the script is called with no arguments. If yes, print an error
+# Check if the script is called with any arguments. If yes, print an error
 # message (help text) and exit
 if [ $# -ne $EXPECTED_ARGS ]
 then
