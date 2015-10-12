@@ -46,11 +46,17 @@ fi
 IMAGES=`find "$SOURCE" -iname "*.jpg"`
 
 # Rename each of the images as TIMESTAMP--BASENAME.jpg
-# Depends on a third-party tool called exiv2. EXIFTool is another option.
+# Depends on a third-party tool called exiftool
 echo
 for file in $IMAGES
 do
-  TIMESTAMP=`exiv2 $file | grep "^Image timestamp" | awk '{print $4 $5}' | sed 's/://g'`
+  TIMESTAMP=`exiftool $file | \
+               grep -i "Date/Time Original" | \
+               head -1 | \
+               awk -F ' :' '{ print $NF }' | \
+               sed 's/^[ \t]*//;s/[ \t]*$//' | \
+               sed 's/://g' | \
+               sed 's/ /_/g'`
   BASENAME=`basename $file`
   echo "  Renaming $file as $TIMESTAMP--$BASENAME"
   # Replace 'cp' with 'mv' iff confident
