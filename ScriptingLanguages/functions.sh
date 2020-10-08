@@ -525,20 +525,33 @@ function validate_time() {
   fi
 
   # Save the argument(s) in local variable(s)
-  local time_hrf="$1"
+  local time_hms="$1"
 
   # Regular expression pattern for time in human readable format
   # ^          : beginning of the string
-  # [0-2][0-4] : Hour - between 00 and 24
-  # [0-5][0-9] : Minute and Second - between 00 and 59
+  # [0-9]{1,2} : 1-2 occurrences of 0-9
   # :          : : (colon)
   # $          : end of the string
-  local regexpr_pattern='^[0-2][0-4]:[0-5][0-9]:[0-5][0-9]$'
+  local regexpr_pattern='^[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}$'
 
   # Check the time_hrf against regexpr_pattern
-  if [[ ${time_hrf} =~ ${regexpr_pattern} ]]
+  if [[ ${time_hms} =~ ${regexpr_pattern} ]]
   then
-    return 0          # Valid user input
+    # Check if each octet is between 0 and 255
+    #   Save the built-in Internal Field Separator (IFS)
+    #   Set the IFS to be a period
+    #   Create an array from ip_address using the new IFS
+    #   Restore the original value of IFS
+    OIFS=${IFS}
+    IFS=":"
+    times=(${time_hms})
+    IFS=${OIFS}
+    if [[ ${times[0]} -le 24 && ${times[1]} -le 59 && ${times[2]} -le 59 ]]
+    then
+      return 0          # Valid user input
+    else
+      return ${E_INPUT} # Invalid user input
+    fi
   else
     return ${E_INPUT} # Invalid user input
   fi
@@ -1161,7 +1174,8 @@ function seconds2hms() {
   if ! validate_numeral ${seconds}
   then
     echo
-    echo "  SECONDS needs to be a numeral (without +/- sign). Exiting."
+    echo "  ${seconds} needs to be a numeral (without +/- sign)."
+    echo "  Invalid input. Exiting."
     echo
     return ${E_INPUT}
   fi  
@@ -1174,6 +1188,73 @@ function seconds2hms() {
   printf "%d:%02d:%02d\n" "${hours}" "${minutes}" "${seconds}"
 }
 export -f seconds2hms
+
+# hms2seconds()
+# Convert human readable format (hh:mm:ss) to seconds
+function hms2seconds() {
+
+  # Argument check
+  if [ $# -ne 1 ]
+  then
+    echo
+    echo "  Usage: ${FUNCNAME} TIME_IN_HUMAN_READABLE_FORMAT"
+    echo "   e.g.: ${FUNCNAME} 01:01:01"
+    echo "         ${FUNCNAME} 12:10:05"
+    echo
+    return ${E_ARGS}
+  fi
+
+  # Save the argument(s) in local variable(s)
+  local time_hms="$1"
+
+  # Input validation
+  if ! validate_time ${time_hms}
+  then
+    echo
+    echo "  ${time_hms} needs to be time in human readable format (hh:mm:ss)."
+    echo "  Invalid input. Exiting."
+    echo
+    return ${E_INPUT}
+  fi  
+
+  # Convert hh:mm:ss to seconds and print the result
+  echo "${time_hms}" | awk -F ':' '{ print ($1 * 3600) + ($2 * 60) + $3 }'
+}
+export -f hms2seconds
+
+# hms2minutes()
+# Convert human readable format (hh:mm:ss) to minutes
+function hms2minutes() {
+
+  # Argument check
+  if [ $# -ne 1 ]
+  then
+    echo
+    echo "  Usage: ${FUNCNAME} TIME_IN_HUMAN_READABLE_FORMAT"
+    echo "   e.g.: ${FUNCNAME} 01:01:01"
+    echo "         ${FUNCNAME} 12:10:05"
+    echo
+    return ${E_ARGS}
+  fi
+
+  # Save the argument(s) in local variable(s)
+  local time_hms="$1"
+
+  # Input validation
+  if ! validate_time ${time_hms}
+  then
+    echo
+    echo "  ${time_hms} needs to be time in human readable format (hh:mm:ss)."
+    echo "  Invalid input. Exiting."
+    echo
+    return ${E_INPUT}
+  fi  
+
+  # Convert hh:mm:ss to minutes and print the result
+  minutes=$(echo "${time_hms}" | awk -F ':' '{ print ($1 * 60) + ($2) + ($3/60) }')
+  round ${minutes} 0
+}
+export -f hms2minutes
 
 ## END: Time operations
 
