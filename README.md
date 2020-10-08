@@ -12,7 +12,7 @@ useful, but without any warranty; without even the implied warranty of
 merchantability or fitness for a particular purpose. Note that if you decide to
 do so, you are doing so entirely at your very own discretion. Neither the
 author nor Michigan Technological University is responsible for any/all damage
-- intellectual and/or otherwise.
+-- intellectual and/or otherwise.
 
 If you found one or more of these to be useful, consider sharing your work
 or improvisations (or at least a relevant portion thereof) in public domain and
