@@ -1,50 +1,63 @@
 #! /bin/bash
 #
-# BASH script to chronologically rename the photographs in a folder 
-# (includes sub-folders). Resulting order assumes that the devices 
-# contrtibuting photographs are in sync with the same time SOURCE.
+# BASH script to chronologically rename the photographs in a folder (includes
+# sub-folders). Depends on exiftool, a third-party application.
 # 
 # Usage:
 # sort_photographs.sh
+
+# functions.sh
+if [ -e "functions.sh" ]
+then
+  source functions.sh
+fi
+
+# Argument check
+if [ $# -ne 0 ]
+then
+  echo
+  echo "  Usage: $(basename $0)"
+  echo
+  exit ${E_ARGS}
+fi
 
 # Necessary variables
 SOURCE="/full/path/to/source/folder/"
 TARGET="/full/path/to/target/folder/"
 
-# Check if the script is called with any arguments. If yes, print an error
-# message (help text) and exit
-if [ $# -ne 0 ]
+# SOURCE folder check
+if ! check_existence ${SOURCE}
 then
   echo
-  echo "  Usage: `basename $0`"
+  echo "  ${SOURCE} folder does not exist."
+  echo "  Invalid input. Exiting."
   echo
-  exit
+  exit ${E_ENTITY_MISSING}
 fi
 
-# Check if the SOURCE folder exists. If not, print an error message (help text)
-# and exit
-if [ ! -d "${SOURCE}" ]
+if ! check_readable ${SOURCE}
 then
   echo
-  echo "  SOURCE folder with images does not exist"
+  echo "  ${SOURCE} folder exists but is not readable."
+  echo "  Incorrect permissions. Exiting."
   echo
-  exit
+  exit ${E_ENTITY_PERMISSIONS}
 fi
 
-# Check if the TARGET folder exists. If not, create it. Assumes that the path
-# for TARGET is user-writable
-if [ ! -d ${TARGET} ]
+# TARGET folder check (assumes the location is write-able)
+if ! check_existence ${TARGET}
 then
   echo
-  echo "  TARGET folder does not exist."
+  echo "  ${TARGET} folder does not exist."
+  echo "  Creating ${TARGET}"
   mkdir -p ${TARGET}
   echo
 fi
 
-# Make a list of all images. Assumes .jpg type. Edit to fit other types
-IMAGES=($(find "$SOURCE" -iname "*.jpg"))
+# Make a list of all .jpg images
+IMAGES=($(find "${SOURCE}" -iname "*.jpg"))
 
-# Rename each of the images as TIMESTAMP--BASENAME.jpg
+# Rename the image as TIMESTAMP__BASENAME.jpg
 # Depends on a third-party tool called exiftool
 echo
 for file in ${IMAGES[@]}
@@ -57,8 +70,9 @@ do
                sed 's/://g' | \
                sed 's/ /_/g')
   BASENAME=$(basename ${file})
-  echo "  Renaming ${file} as ${TIMESTAMP}--${BASENAME}"
+
   # Replace 'cp' with 'mv' iff confident
-  cp ${file} ${TARGET}/${TIMESTAMP}--${BASENAME}
+  echo "  Renaming ${file} as ${TIMESTAMP}__${BASENAME}"
+  cp ${file} ${TARGET}/${TIMESTAMP}__${BASENAME}
 done
 echo
