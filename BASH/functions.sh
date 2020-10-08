@@ -421,6 +421,94 @@ function validate_alphanum() {
 }
 export -f validate_alphanum
 
+# validate_hostname()
+# Checks if a string validates as hostname
+# https://www.regexpal.com/23
+function validate_hostname() {
+
+  # Argument check
+  if [ $# -ne 1 ]
+  then
+    echo
+    echo "  Usage: ${FUNCNAME} HOSTNAME"
+    echo "   e.g.: ${FUNCNAME} google.com"
+    echo
+    return ${E_ARGS}
+  fi
+
+  # Save the argument(s) in local variable(s)
+  local host_name="$1"
+
+  # Regular expression pattern for a hostname
+  #   It must start with an alphanumeric character
+  #   It cannot contain non-alphanumeric characters other than hyphen (-) and
+  #     period (.) 
+  #   It must end with an alphanumeric character
+  # ^          : beginning of the string
+  # \-         : - (hyphen)
+  # \.         : . (period)
+  # $          : end of the string
+  local regexpr_pattern='^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'
+
+  # Check the host_name against regexpr_pattern
+  if [[ ${host_name} =~ ${regexpr_pattern} ]]
+  then
+    return 0          # Valid user input
+  else
+    return ${E_INPUT} # Invalid user input
+  fi
+}
+export -f validate_hostname
+
+# validate_ipaddress()
+# Checks if a string validates as an IP address
+# https://www.linuxjournal.com/content/validating-ip-address-bash-script
+function validate_ipaddress() {
+
+  # Argument check
+  if [ $# -ne 1 ]
+  then
+    echo
+    echo "  Usage: ${FUNCNAME} IPv4_ADDRESS"
+    echo "   e.g.: ${FUNCNAME} 172.217.8.174"
+    echo
+    return ${E_ARGS}
+  fi
+
+  # Save the argument(s) in local variable(s)
+  local ip_address="$1"
+
+  # Regular expression pattern for an IPv4 address
+  # ^          : beginning of the string
+  # [0-9]{1,3} : 1-3 occurrences of 0-9
+  # \.         : . (period)
+  # $          : end of the string
+  local regexpr_pattern='^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
+
+  # Check the ip_address against regexpr_pattern
+  if [[ ${ip_address} =~ ${regexpr_pattern} ]]
+  then
+    # Check if each octet is between 0 and 255
+    #   Save the built-in Internal Field Separator (IFS)
+    #   Set the IFS to be a period
+    #   Create an array from ip_address using the new IFS
+    #   Restore the original value of IFS
+    OIFS=${IFS}
+    IFS="."
+    ip=(${ip_address})
+    IFS=${OIFS}
+    if [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
+    then
+      return 0          # Valid user input
+    else
+      return ${E_INPUT} # Invalid user input
+    fi
+  else
+    return ${E_INPUT} # Invalid user input
+  fi
+}
+export -f validate_ipaddress
+
 # lc2uc()
 # Converts a string from lowercase to uppercase
 function lc2uc() {
@@ -1672,94 +1760,6 @@ function login_counter() {
   echo
 }
 export -f login_counter
-
-# validate_hostname()
-# Checks if a string validates as hostname
-# https://www.regexpal.com/23
-function validate_hostname() {
-
-  # Argument check
-  if [ $# -ne 1 ]
-  then
-    echo
-    echo "  Usage: ${FUNCNAME} HOSTNAME"
-    echo "   e.g.: ${FUNCNAME} google.com"
-    echo
-    return ${E_ARGS}
-  fi
-
-  # Save the argument(s) in local variable(s)
-  local host_name="$1"
-
-  # Regular expression pattern for a hostname
-  #   It must start with an alphanumeric character
-  #   It cannot contain non-alphanumeric characters other than hyphen (-) and
-  #     period (.) 
-  #   It must end with an alphanumeric character
-  # ^          : beginning of the string
-  # \-         : - (hyphen)
-  # \.         : . (period)
-  # $          : end of the string
-  local regexpr_pattern='^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'
-
-  # Check the host_name against regexpr_pattern
-  if [[ ${host_name} =~ ${regexpr_pattern} ]]
-  then
-    return 0          # Valid user input
-  else
-    return ${E_INPUT} # Invalid user input
-  fi
-}
-export -f validate_hostname
-
-# validate_ipaddress()
-# Checks if a string validates as an IP address
-# https://www.linuxjournal.com/content/validating-ip-address-bash-script
-function validate_ipaddress() {
-
-  # Argument check
-  if [ $# -ne 1 ]
-  then
-    echo
-    echo "  Usage: ${FUNCNAME} IPv4_ADDRESS"
-    echo "   e.g.: ${FUNCNAME} 172.217.8.174"
-    echo
-    return ${E_ARGS}
-  fi
-
-  # Save the argument(s) in local variable(s)
-  local ip_address="$1"
-
-  # Regular expression pattern for an IPv4 address
-  # ^          : beginning of the string
-  # [0-9]{1,3} : 1-3 occurrences of 0-9
-  # \.         : . (period)
-  # $          : end of the string
-  local regexpr_pattern='^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$'
-
-  # Check the ip_address against regexpr_pattern
-  if [[ ${ip_address} =~ ${regexpr_pattern} ]]
-  then
-    # Check if each octet is between 0 and 255
-    #   Save the built-in Internal Field Separator (IFS)
-    #   Set the IFS to be a period
-    #   Create an array from ip_address using the new IFS
-    #   Restore the original value of IFS
-    OIFS=${IFS}
-    IFS="."
-    ip=(${ip_address})
-    IFS=${OIFS}
-    if [[ ${ip[0]} -le 255 && ${ip[1]} -le 255 && ${ip[2]} -le 255 && ${ip[3]} -le 255 ]]
-    then
-      return 0          # Valid user input
-    else
-      return ${E_INPUT} # Invalid user input
-    fi
-  else
-    return ${E_INPUT} # Invalid user input
-  fi
-}
-export -f validate_ipaddress
 
 # ping_server
 # Pings a server to check/validate network connectivity
