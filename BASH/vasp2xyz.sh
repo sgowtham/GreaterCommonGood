@@ -78,19 +78,22 @@ then
   echo "  Please make sure OUTCAR and POSCAR are from the same"
   echo "  system and (successfully completed) simulation."
   echo 
-  exit
+  exit ${E_INPUT}
 fi
 
 # Print initial summary
 echo
-echo "  Number of Atom Types   :" ${ATOM_TYPE_TOTAL}
-echo "  Atom Type              :" ${ATOM_LABEL[@]}
-echo "  Atom Type Count        :" ${ATOM_TYPE[@]}
-echo "  Total Number of Atoms  :" ${ATOMS_TOTAL}
+echo "  ${POSCAR} and ${OUTCAR} found"
+echo "  ${OUTPUT_FILE} writable in ${OUTPUT_FOLDER}"
+echo
+echo "  Number of atom types   :" ${ATOM_TYPE_TOTAL}
+echo "  Atom type(s)           :" ${ATOM_LABEL[@]}
+echo "  Atom type count(s)     :" ${ATOM_TYPE[@]}
+echo "  Total number of atoms  :" ${ATOMS_TOTAL}
  
 # ATOM_LABEL_2 is an array of atom labels
 # with each atom label appearing an appropriate
-# number of times, to a total of $ATOMS_TOTAL
+# number of times, to a total of ATOMS_TOTAL
 declare -a ATOM_LABEL_2
 REPEAT=0
 j=0
@@ -133,13 +136,18 @@ do
   l=1
   while read X Y Z
   do
-    echo ${ATOM_LABEL_2[$l]} ${X} ${Y} ${Z} > Final.tmp.${FRAME_NUMBER}.${l}
+    echo "${ATOM_LABEL_2[${l}]} ${X} ${Y} ${Z}" > Final.tmp.${FRAME_NUMBER}.${l}
     awk '{ printf "%-3s %12.8f %12.8f %12.8f\n", $1, $2, $3, $4 }' Final.tmp.${FRAME_NUMBER}.${l} >> ${OUTPUT_FILE}
     l=$(expr ${l} + 1)
   done<Final.tmp.${FRAME_NUMBER}
  
   FRAME_NUMBER=$(expr ${FRAME_NUMBER} + 1)
-done
+done<LINE_NUMBERS.tmp
 
-# Remove temporary files from prior runs
-rm -f Final.tmp.* LINE_NUMBERS.tmp
+FRAMES_TOTAL=$(expr ${FRAME_NUMBER} - 1)
+echo "  Total number of frames :" ${FRAMES_TOTAL}
+echo
+
+# Remove temporary files
+rm -f Final.tmp.*
+rm -f LINE_NUMBERS.tmp
