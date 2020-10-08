@@ -73,18 +73,18 @@ echo "  Korte  : https://www.birkie.com/ski/events/kortelopet/#wave-placement"
 echo
 echo
 
-cat <<EOF
-
-  <!-- RESULTS LINK -->
-  <!-- Birkie_WavePlacementMathematics.sh ${TIME_WINNER} ${TIME_MINE} ${EVENT_ADJUSTMENT_FACTOR} -->
-  <tr>
-    <td valign="top">EVENT NAME</td>
-    <td valign="top" style="text-align: right;">${TIME_WINNER} (${MINUTES_WINNER})</td>
-    <td valign="top" style="text-align: right;">${TIME_MINE} (${MINUTES_MINE})</td>
-    <td valign="top" style="text-align: right;">${PERCENTAGE_BACK}%</td>
-    <td valign="top" style="text-align: right;">${EVENT_ADJUSTMENT_FACTOR}%</td>
-    <td valign="top" style="text-align: right;">${PBE}%</td>
-    <td valign="top" style="text-align: center;">WAVE</td>
-  </tr>
-
-EOF
+# cat <<EOF
+# 
+#   <!-- RESULTS LINK -->
+#   <!-- Birkie_WavePlacementMathematics.sh ${TIME_WINNER} ${TIME_MINE} ${EVENT_ADJUSTMENT_FACTOR} -->
+#   <tr>
+#     <td valign="top">EVENT NAME</td>
+#     <td valign="top" style="text-align: right;">${TIME_WINNER} (${MINUTES_WINNER})</td>
+#     <td valign="top" style="text-align: right;">${TIME_MINE} (${MINUTES_MINE})</td>
+#     <td valign="top" style="text-align: right;">${PERCENTAGE_BACK}%</td>
+#     <td valign="top" style="text-align: right;">${EVENT_ADJUSTMENT_FACTOR}%</td>
+#     <td valign="top" style="text-align: right;">${PBE}%</td>
+#     <td valign="top" style="text-align: center;">WAVE</td>
+#   </tr>
+# 
+# EOF
