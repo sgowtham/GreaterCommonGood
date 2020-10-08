@@ -7,12 +7,17 @@ A personal collection of scripts and programs for public usage.
 Disclaimer
 -------------------
 
-This and other associated files are distributed in the hope that they will 
-be useful, but without any warranty; without even the implied warranty of 
-merchantability or fitness for a particular purpose. Note that
-if you decide to do so, you are doing so entirely at your very own discretion
-and that neither the author nor Michigan Technological University is
-responsible for any/all damage -- intellectual and/or otherwise.
+This and other associated files are distributed in the hope that they will be
+useful, but without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose. Note that if you decide to
+do so, you are doing so entirely at your very own discretion. Neither the
+author nor Michigan Technological University is responsible for any/all damage
+- intellectual and/or otherwise.
+
+If you found one or more of these to be useful, consider sharing your work
+or improvisations (or at least a relevant portion thereof) in public domain and
+make our common well knowledge a little deeper and a little richer than what it
+is now.
 
 Got questions? Need help?
 -------------------
