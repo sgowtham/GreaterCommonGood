@@ -1,7 +1,12 @@
-Utilities
+Greater Common Good
 ================
 
-A personal collection of scripts and programs for public usage.
+A personal collection of sanitized hacks, functions, scripts and programs for
+public usage. I have learned much over the past 18+ years of dabbling in Linux
+OS and its command line interface - via making a lot of mistakes and
+documenting the lessons therefrom as well as with help from a plethora of
+resources. Most of these play a critical role in my day to day existence in a 
+wide range of projects.
 
 
 Disclaimer
