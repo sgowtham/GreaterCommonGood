@@ -509,6 +509,42 @@ function validate_ipaddress() {
 }
 export -f validate_ipaddress
 
+# validate_time()
+# Checks if a string validates as time in human readable format (hh:mm:ss)
+function validate_time() {
+
+  # Argument check
+  if [ $# -ne 1 ]
+  then
+    echo
+    echo "  Usage: ${FUNCNAME} TIME_IN_HUMAN_READABLE_FORMAT"
+    echo "   e.g.: ${FUNCNAME} 01:01:01"
+    echo "         ${FUNCNAME} 12:10:05"
+    echo
+    return ${E_ARGS}
+  fi
+
+  # Save the argument(s) in local variable(s)
+  local time_hrf="$1"
+
+  # Regular expression pattern for time in human readable format
+  # ^          : beginning of the string
+  # [0-2][0-4] : Hour - between 00 and 24
+  # [0-5][0-9] : Minute and Second - between 00 and 59
+  # :          : : (colon)
+  # $          : end of the string
+  local regexpr_pattern='^[0-2][0-4]:[0-5][0-9]:[0-5][0-9]$'
+
+  # Check the time_hrf against regexpr_pattern
+  if [[ ${time_hrf} =~ ${regexpr_pattern} ]]
+  then
+    return 0          # Valid user input
+  else
+    return ${E_INPUT} # Invalid user input
+  fi
+}
+export -f validate_time
+
 # lc2uc()
 # Converts a string from lowercase to uppercase
 function lc2uc() {
