@@ -14,10 +14,11 @@ do so, you are doing so entirely at your very own discretion. Neither the
 author nor Michigan Technological University is responsible for any/all damage
 -- intellectual and/or otherwise.
 
-If you found one or more of these to be useful, consider sharing your work
-or improvisations (or at least a relevant portion thereof) in public domain and
-make our common well knowledge a little deeper and a little richer than what it
-is now.
+Feel free to clone/fork this repository and make changes to fit your needs.
+You have my explicit permission to do so. If you found one or more of these to
+be useful, consider sharing your work or improvisations (or at least a relevant
+portion thereof) in public domain and make our common well knowledge a little
+deeper and a little richer than what it is now.
 
 Got questions? Need help?
 -------------------
@@ -25,13 +26,6 @@ Got questions? Need help?
 [Google](http://google.com/) search often provides a quick and reliable answer.
 If all else fails, then contact the author.
 
-
-Don't like this OR have an idea to improve?
--------------------
-
-Feel free to clone/fork this repository and make changes to fit your needs.
-You have my explicit permission to do so. These files and/or the changes
-you make may very well work for you (or your institution).
 
 Author
 -------------------
