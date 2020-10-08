@@ -12,7 +12,12 @@
 # functions.sh
 if [ -e "functions.sh" ]
 then
-  source functions.sh
+  source "functions.sh"
+else
+  echo
+  echo "  This script needs functions.sh to perform various tasks."
+  echo
+  exit
 fi
 
 # Argument check
