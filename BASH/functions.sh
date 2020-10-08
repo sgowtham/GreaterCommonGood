@@ -6,6 +6,9 @@
 # Terminal. Alternatively, this file can be sourced from ${HOME}/.bashrc so
 # that changes are in automatically effect every time a new Terminal is opened.
 #
+# The variables whose scope is limited to the definition of the function they
+# are part of is declared in lowercase alphabets.
+#
 # source functions.sh
 
 # Exit/Error/Return codes (64 - 113)
@@ -62,8 +65,7 @@ export E_PING=112
 export E_LOCK=112
 export E_ROOT=113
 
-
-# BEGIN: hello, world!
+## BEGIN: hello, world!
 
 # hello_world()
 # Print "Hello, World" and a user-supplied string
@@ -91,7 +93,7 @@ function hello_world() {
 }
 export -f hello_world
 
-# END: hello, world!
+## END: hello, world!
 
 ## BEGIN: String operations
 
@@ -1070,11 +1072,13 @@ function check_existence() {
   entity="$1"
 
   # Check if the ENTITY exists
-  if [ -e "${entity}" ]
+  if [ ! -e "${entity}" ]
   then
-    return 0          # Valid user input
-  else
-    return ${E_INPUT} # Invalid user input
+    echo
+    echo "  ${entity} does not exist."
+    echo "  Invalid input. Exiting."
+    echo
+    return ${E_INPUT}
   fi
 }
 export -f check_existence
@@ -1096,11 +1100,13 @@ function check_readable() {
   entity="$1"
 
   # Check if the ENTITY is readable
-  if [ -r "${entity}" ]
+  if [ ! -r "${entity}" ]
   then
-    return 0          # Valid user input
-  else
-    return ${E_INPUT} # Invalid user input
+    echo
+    echo "  ${entity} is not readable."
+    echo "  Check permissions. Exiting."
+    echo
+    return ${E_ENTITY_PERMISSION}
   fi
 }
 export -f check_readable
@@ -1122,11 +1128,13 @@ function check_writable() {
   entity="$1"
 
   # Check if the ENTITY is writable
-  if [ -w "${entity}" ]
+  if [ ! -w "${entity}" ]
   then
-    return 0          # Valid user input
-  else
-    return ${E_INPUT} # Invalid user input
+    echo
+    echo "  ${entity} is not writable."
+    echo "  Check permissions. Exiting."
+    echo
+    return ${E_ENTITY_PERMISSION}
   fi
 }
 export -f check_writable
@@ -1148,11 +1156,13 @@ function check_file() {
   entity="$1"
 
   # Check if the ENTITY is file
-  if [ -f "${entity}" ]
+  if [ ! -f "${entity}" ]
   then
-    return 0          # Valid user input
-  else
-    return ${E_INPUT} # Invalid user input
+    echo
+    echo "  ${entity} is not a file."
+    echo "  Invalid input. Exiting."
+    echo
+    return ${E_INPUT}
   fi
 }
 export -f check_file
@@ -1174,11 +1184,13 @@ function check_folder() {
   entity="$1"
 
   # Check if the ENTITY is folder
-  if [ -d "${entity}" ]
+  if [ ! -d "${entity}" ]
   then
-    return 0          # Valid user input
-  else
-    return ${E_INPUT} # Invalid user input
+    echo
+    echo "  ${entity} is not a folder."
+    echo "  Invalid input. Exiting."
+    echo
+    return ${E_INPUT}
   fi
 }
 export -f check_folder
@@ -1201,33 +1213,9 @@ function smart_extract() {
   compressed_entity_folder=$(dirname $(readlink -f ${compressed_entity}))
 
   # Input validation
-  if ! check_existence ${compressed_entity}
-  then
-    echo
-    echo "  ${compressed_entity} does not exist."
-    echo "  Invalid input. Existing."
-    echo
-    return ${E_ENTITY_MISSING}
-  fi  
-
-  if ! check_readable ${compressed_entity}
-  then
-    echo
-    echo "  ${compressed_entity} exists but is not readable."
-    echo "  Existing."
-    echo
-    return ${E_ENTITY_PERMISSIONS}
-  fi
-
-  if ! check_writable ${compressed_entity_folder}
-  then
-    echo
-    echo "  ${compressed_entity} exists and is readable."
-    echo "  ${compressed_entity_folder} is not writable."
-    echo "  Existing."
-    echo
-    return ${E_ENTITY_PERMISSIONS}
-  fi
+  check_existence ${compressed_entity}
+  check_readable  ${compressed_entity}
+  check_writable  ${compressed_entity_folder}
 
   # Using switch-case construct prevents deeply nested if statements
   case ${compressed_entity} in
@@ -1498,11 +1486,10 @@ fooling_git() {
     return ${E_ARGS}
   fi
 
-  cd $(git rev-parse --show-toplevel)
-
   # Validate Git repository
   if validate_git_repo
   then
+    cd $(git rev-parse --show-toplevel)
     for folder in $(find . -type d | grep -v ".git")
     do
       if [ -w "${folder}" ]
@@ -1528,10 +1515,10 @@ git_repack() {
     return ${E_ARGS}
   fi
 
-  cd $(git rev-parse --show-toplevel)
   # Validate Git repository
   if validate_git_repo
   then
+    cd $(git rev-parse --show-toplevel)
     du -sh ./.git
     du -sk ./.git
     git repack -a -d --depth=5000 --window=5000
@@ -1688,6 +1675,7 @@ export -f login_counter
 
 # validate_hostname()
 # Checks if a string validates as hostname
+# https://www.regexpal.com/23
 function validate_hostname() {
 
   # Argument check
@@ -1726,6 +1714,7 @@ export -f validate_hostname
 
 # validate_ipaddress()
 # Checks if a string validates as an IP address
+# https://www.linuxjournal.com/content/validating-ip-address-bash-script
 function validate_ipaddress() {
 
   # Argument check
@@ -1780,7 +1769,7 @@ ping_server() {
   if [ $# -ne 1 ]
   then
     echo
-    echo "  Usage: ${FUNCNAME} REMOTE_WORSTATION"
+    echo "  Usage: ${FUNCNAME} REMOTE_WORSTATION_HOSTNAME_OR_IPv4ADDRESS"
     echo "   e.g.: ${FUNCNAME} colossus.it.mtu.edu"
     echo "         ${FUNCNAME} 141.219.64.104"
     echo
@@ -1790,17 +1779,27 @@ ping_server() {
   # Save the argument(s) in local variable(s)
   ping_server="$1"
 
-  # Ping parameters
-  ping_count="10"
-  ping_interval="0.20"
+  # Input validation
+  if validate_hostname ${ping_server} || validate_ipaddress ${ping_server}
+  then
+    # Ping parameters
+    ping_count="10"
+    ping_interval="0.20"
 
-  # Ping the server, compute packet ratio and print the result
-  ping_cmd="ping -q -c ${ping_count} -i ${ping_interval}"
-  ping_test=$(${ping_cmd} ${ping_server} | grep "packets transmitted")
-  packets_sent=$(echo ${ping_test} | awk '{ print $1 }')
-  packets_recd=$(echo ${ping_test} | awk '{ print $4 }')
-  packet_ratio=$(echo "${packets_recd}/${packets_sent}" | bc)
-  echo "${packet_ratio}"
+    # Ping the server, compute packet ratio and print the result
+    ping_cmd="ping -q -c ${ping_count} -i ${ping_interval}"
+    ping_test=$(${ping_cmd} ${ping_server} | grep "packets transmitted")
+    packets_sent=$(echo ${ping_test} | awk '{ print $1 }')
+    packets_recd=$(echo ${ping_test} | awk '{ print $4 }')
+    packet_ratio=$(echo "${packets_recd}/${packets_sent}" | bc)
+    echo "${packet_ratio}"
+  else
+    echo
+    echo "  ${ping_server} is not a valid hostname/IPv4 address."
+    echo "  Invalid input. Exiting."
+    echo
+    return ${E_INPUT}
+  fi
 }
 export -f ping_server
 
