@@ -1,15 +1,14 @@
-# functions.sh
+# CommonFunctions.sh
 #
-# User-defined functions are stored in this file. This is a READ-WRITE file,
-# and may be modified to fit specific needs. If this file is edited and saved,
-# run the following command to bring the changes into effect in the same
+# User-defined functions are stored in this file. If this file is edited and
+# saved, run the following command to bring the changes into effect in the same
 # Terminal. Alternatively, this file can be sourced from ${HOME}/.bashrc so
 # that changes are in automatically effect every time a new Terminal is opened.
 #
 # The variables whose scope is limited to the definition of the function they
 # are part of is declared in lowercase alphabets.
 #
-# source functions.sh
+# source CommonFunctions.sh
 
 # Exit/Error/Return codes (64 - 113)
 # Number of arguments, input validation and files (64 - 69)
