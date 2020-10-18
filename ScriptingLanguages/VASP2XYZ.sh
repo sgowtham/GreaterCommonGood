@@ -1,21 +1,24 @@
 #! /bin/bash
 # 
 # BASH script to extract the atomic positions (xyz) from POSCAR and OUTCAR
-# files of VASP and write them to an XYZ file - to be used with Jmol, MolDen
-# and such other third-party programs. This script needs to be run from the
-# same folder that contains POSCAR and OUTCAR files. The output file will be
-# overwritten, if it exists.
+# files of VASP (Vienna Ab-initio Simulation Program) and write them to an XYZ
+# file - to be used with Jmol, MolDen and such other third-party programs. This
+# script needs to be run from the same folder that contains POSCAR and OUTCAR
+# files. The output file will be overwritten, if it exists.
 #
 # Usage:
-# vasp2xyz.sh
+# VASP2XYZ.sh
 
-# functions.sh
-if [ -e "functions.sh" ]
+# CommonFunctions.sh
+if [ -e "CommonFunctions.sh" ]
 then
-  source "functions.sh"
+  source "CommonFunctions.sh"
 else
   echo
-  echo "  This script needs functions.sh to perform various tasks."
+  echo "  This script needs CommonFunctions.sh to perform various tasks."
+  echo "  Ensure CommonFunctions.sh and this script are in the same folder"
+  echo "  OR update the path to CommonFunctions.sh."
+  echo "  Exiting the script."
   echo
   exit
 fi
