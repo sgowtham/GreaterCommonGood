@@ -8,13 +8,16 @@
 # Usage:
 # SortPhotographsByTimeTaken.sh
 
-# functions.sh
-if [ -e "functions.sh" ]
+# CommonFunctions.sh
+if [ -e "CommonFunctions.sh" ]
 then
-  source "functions.sh"
+  source "CommonFunctions.sh"
 else
   echo
-  echo "  This script needs functions.sh to perform various tasks."
+  echo "  This script needs CommonFunctions.sh to perform various tasks."
+  echo "  Ensure CommonFunctions.sh and this script are in the same folder"
+  echo "  OR update the path to CommonFunctions.sh."
+  echo "  Exiting the script."
   echo
   exit
 fi
