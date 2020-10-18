@@ -54,7 +54,6 @@ then
 fi
 
 # Run the python script
-cd /var/www/sgowtham/training/admin
 echo
 echo "  Creating a manual activity with following details"
 ech
