@@ -1,10 +1,12 @@
 #! /bin/bash
 #
-# BASH script to chronologically rename the photographs in a folder (includes
-# sub-folders). Depends on exiftool, a third-party application.
+# BASH script to rename the photographs in a folder (includes sub-folders) in
+# chronological order of the time taken as recorded in the EXIF data. Assumes
+# that the photographs have .jpg extension for their file names. Depends on
+# exiftool, a third-party application.
 # 
 # Usage:
-# sort_photographs.sh
+# SortPhotographsByTimeTaken.sh
 
 # functions.sh
 if [ -e "functions.sh" ]
