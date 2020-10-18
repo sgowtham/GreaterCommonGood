@@ -56,7 +56,7 @@ fi
 # Run the python script
 echo
 echo "  Creating a manual activity with following details"
-ech
+echo
 echo "    Activity title           : ${ACTIVITY_TITLE}"
 echo "    Activity start date/time : ${ACTIVITY_START_DATETIME}"
 echo "    Activity duration        : ${ACTIVITY_DURATION} seconds"
