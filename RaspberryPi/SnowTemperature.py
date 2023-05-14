@@ -1,12 +1,15 @@
-# ds18b20_temperature.py
+# SnowTemperature.py
 #
 # Python script to read and store the data from DS18B20 temperature sensor
-# in Raspberry Pi 3 Model B (circa 2015).
+# in Raspberry Pi 3 Model B (circa 2015). The parent BASH script,
+# ./SnowTemperature.sh, will run this Python script. Running the Python script
+# by itself will not transfer the recorded data to a designated remote server
+# for archival and post-processing purposes.
 #
 # Usage:
-# python3 ds18b20_temperature.py LOCATION
+# ./SnowTemperature.sh LOCATION COUNTER_MAX
 #
-# If a LIBRARY is missing, the following command may be used to install it:
+# If a Python LIBRARY is missing, the following command may be used:
 # python3 -m pip install LIBRARY
 
 # Necessary libraries
@@ -21,15 +24,15 @@ import sys
 import time
 
 # Argument check
-if len(sys.argv) != 2:
+if len(sys.argv) != 3:
   print("")
-  print("  Usage: python3 " + sys.argv[0] + " LOCATION")
-  print("   e.g.: python3 " + sys.argv[0] + " BendOR")
-  print("         python3 " + sys.argv[0] + " CableWI")
-  print("         python3 " + sys.argv[0] + " HoughtonMI")
-  print("         python3 " + sys.argv[0] + " MarquetteMI")
-  print("         python3 " + sys.argv[0] + " ParkCityUT")
-  print("         python3 " + sys.argv[0] + " TrondheimNO")
+  print("  Usage: python3 " + sys.argv[0] + " LOCATION      COUNTER_MAX")
+  print("   e.g.: python3 " + sys.argv[0] + " BendOR        100")
+  print("         python3 " + sys.argv[0] + " CableWI       100")
+  print("         python3 " + sys.argv[0] + " HoughtonMI    100")
+  print("         python3 " + sys.argv[0] + " MarquetteMI   100")
+  print("         python3 " + sys.argv[0] + " ParkCityUT    100")
+  print("         python3 " + sys.argv[0] + " TrondheimNOR  100")
   print("")
   sys.exit()
 
@@ -38,9 +41,15 @@ os.system('sudo modprobe w1-gpio')
 os.system('sudo modprobe w1-therm')
 
 # Variables
-location  = sys.argv[1]
+# location is used in creating a file to store the recordings
+# counter_max represents the number of measurements - taken approximately once
+# every minute
+# sleep_timer represents the number of seconds between successive measurements
+location    = sys.argv[1]
+counter_max = sys.argv[2]
+sleep_timer = 55
 
-# Necessary functions
+# Function declarations
 
 # List of DS18B20 sensors
 # Files related to any given DS18B20 sensor reside in a folder that has the
@@ -115,11 +124,11 @@ def loop(ds18b20):
   file_name_data.write("#            Fields are separated by the | character\n")
   file_name_data.write("#\n")
 
-  # Set the counter (used to break out of the loop after counter_max
-  # measurements)
-  counter     = 0
-  counter_max = 1000
+  # Initiate the counter
+  counter = 0
 
+  # Run the loop indefinitely (or in other words, until counter_max number of 
+  # measurements have been recorded OR until CTRL+C is pressed)
   while True:
     if read(ds18b20) != None:
       # Increment the counter
@@ -137,8 +146,8 @@ def loop(ds18b20):
       # Record the data in the file
       file_name_data.write("%04d|%19s|%06.3f|%06.3f\n" % (counter, date_time, celsius, fahrenheit))
 
-      # Pause/Sleep for 3 seconds
-      time.sleep(3)
+      # Pause/Sleep for sleep_timer seconds
+      time.sleep(sleep_timer)
 
       # If counter_max measurements have been made, then stop the program
       if counter == counter_max:
@@ -158,7 +167,7 @@ def kill():
   quit()
 
 # Start the main program
-# Include handling when CTRL+C key combination is pressed to terminate
+# Include handling when CTRL+C is pressed to terminate
 if __name__ == '__main__':
   try:
     serialNum = sensor()
