@@ -27,8 +27,7 @@ github_repo     = "https://github.com/sgowtham/GreaterCommonGood/tree/main/Raspb
 remote_details  = str(remote_username) + '@' + str(remote_server) + ':' + str(remote_folder)
 
 
-# PLEASE DO NOT EDIT BELOW THIS LINE
-# UNLESS THERE IS AN ABSOLUTE NEED
+# PLEASE DO NOT EDIT BELOW THIS LINE UNLESS THERE IS AN ABSOLUTE NEED
 
 # Necessary libraries
 import datetime
