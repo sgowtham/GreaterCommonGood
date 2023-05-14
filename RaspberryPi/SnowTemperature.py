@@ -66,6 +66,16 @@ os.system('sudo modprobe w1-therm')
 location    = str(sys.argv[1])
 counter_max = int(sys.argv[2])
 
+# Open the file for recording data
+# If a file by the same name exists, the contents will be overwritten
+date_time        = datetime.datetime.now()
+date_time        = date_time.strftime("%Y%m%d_%H%M%S")
+file_name        = str(location) + '_' + str(date_time) + '_SnowTemperature.dat' 
+file_touch_time  = date_time[:-2]
+file_touch_time  = file_touch_time.replace("_", "")
+file_name_handle = open(file_name, "w")
+
+
 # Function declarations
 
 # List of DS18B20 sensors
@@ -123,23 +133,16 @@ def read(ds18b20):
 # Keep looping through every sleep_timer seconds and process the data
 def loop(ds18b20):
 
-  # Open the file for recording data
-  # If a file by the same name exists, the contents will be overwritten
-  date_time        = datetime.datetime.now()
-  date_time        = date_time.strftime("%Y%m%d_%H%M%S")
-  file_name        = str(location) + '_' + str(date_time) + '_SnowTemperature.dat' 
-  file_name_handle = open(file_name, "w")
-
   # Comment the print statements below to save some resoures, if need be
   print("")
   print("# Filename : %s" % (file_name))
   print("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)")
   print("# Format   : ID, Time Stamp, Celsius, Fahrenheit")
   print("#            Fields are separated by the | character")
-  print("")
+  print("#")
   print("# Upon successful completion, the recording may be viewed at")
   print("# %s/%s" % (remote_website, file_name))
-  print("")
+  print("#")
   print("# and at the following public GitHub repository")
   print("# %s" % (github_repo))
   print("")
@@ -198,9 +201,12 @@ def loop(ds18b20):
         # Close the file, transfer the data and terminate the program
         file_name_handle.close()
 
-        pi2remote_command = subprocess.Popen(["scp", file_name, remote_details]) 
-        pi2remote_status  = os.waitpid(pi2remote_command.pid, 0)
+        os.system('touch -t %s %s' % (file_touch_time, file_name))
+        os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+        # pi2remote_command = subprocess.Popen(["scp", file_name, remote_details]) 
+        # pi2remote_status  = os.waitpid(pi2remote_command.pid, 0)
 
+        time.sleep(1)
         kill()
 
 # Termination
@@ -214,4 +220,14 @@ if __name__ == '__main__':
     serialNum = sensor()
     loop(serialNum)
   except KeyboardInterrupt:
+    # Close the file, transfer the data and terminate the program
+    file_name_handle.close()
+
+    os.system('touch -t %s %s' % (file_touch_time, file_name))
+    os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+    # touch -t %s %s' % (file_touch_time, file_name))
+    # pi2remote_command = subprocess.Popen(["scp", file_name, remote_details]) 
+    # pi2remote_status  = os.waitpid(pi2remote_command.pid, 0)
+
+    time.sleep(1)
     kill()
