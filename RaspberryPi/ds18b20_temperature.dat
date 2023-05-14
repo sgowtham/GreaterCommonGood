@@ -1,0 +1,7 @@
+#
+# Location : This is a TODO item
+# Format   : ID, Time Stamp, Celsius, Fahrenheit
+#            Fields are separated by | character
+#
+0001|2023-05-13 20:58:58|18.562|65.412
+0002|2023-05-13 20:59:03|18.562|65.412
