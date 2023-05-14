@@ -11,17 +11,17 @@
 # Strava_CreateManualActivity.sh
 
 # CommonFunctions.sh
-if [ -e "CommonFunctions.sh" ]
+if [ -e "../CommonFunctions.sh" ]
 then
-  source "CommonFunctions.sh"
+  source "../CommonFunctions.sh"
 else
   echo
   echo "  This script needs CommonFunctions.sh to perform various tasks."
-  echo "  Ensure CommonFunctions.sh and this script are in the same folder"
-  echo "  OR update the path to CommonFunctions.sh."
+  echo "  Ensure CommonFunctions.sh is located one folder above in the tree"
+  echo "  and is accessible"
   echo "  Exiting the script."
   echo
-  exit
+  exit 66
 fi
 
 # Argument check

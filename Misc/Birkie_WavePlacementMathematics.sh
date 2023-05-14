@@ -9,17 +9,17 @@
 # Birkie_WavePlacementMathematics.sh
 
 # CommonFunctions.sh
-if [ -e "CommonFunctions.sh" ]
+if [ -e "../CommonFunctions.sh" ]
 then
-  source "CommonFunctions.sh"
+  source "../CommonFunctions.sh"
 else
   echo
   echo "  This script needs CommonFunctions.sh to perform various tasks."
-  echo "  Ensure CommonFunctions.sh and this script are in the same folder"
-  echo "  OR update the path to CommonFunctions.sh."
+  echo "  Ensure CommonFunctions.sh is located one folder above in the tree"
+  echo "  and is accessible"
   echo "  Exiting the script."
   echo
-  exit
+  exit 66
 fi
 
 # show_help()
@@ -75,19 +75,3 @@ echo "  Birkie : https://www.birkie.com/ski/events/birkie/#wave-placement"
 echo "  Korte  : https://www.birkie.com/ski/events/kortelopet/#wave-placement"
 echo
 echo
-
-# cat <<EOF
-# 
-#   <!-- RESULTS LINK -->
-#   <!-- Birkie_WavePlacementMathematics.sh ${TIME_WINNER} ${TIME_MINE} ${EVENT_ADJUSTMENT_FACTOR} -->
-#   <tr>
-#     <td valign="top">EVENT NAME</td>
-#     <td valign="top" style="text-align: right;">${TIME_WINNER} (${MINUTES_WINNER})</td>
-#     <td valign="top" style="text-align: right;">${TIME_MINE} (${MINUTES_MINE})</td>
-#     <td valign="top" style="text-align: right;">${PERCENTAGE_BACK}%</td>
-#     <td valign="top" style="text-align: right;">${EVENT_ADJUSTMENT_FACTOR}%</td>
-#     <td valign="top" style="text-align: right;">${PBE}%</td>
-#     <td valign="top" style="text-align: center;">WAVE</td>
-#   </tr>
-# 
-# EOF
