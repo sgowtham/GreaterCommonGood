@@ -177,13 +177,18 @@ def loop(ds18b20):
         # Close the file, transfer the data and terminate the program
         file_name_handle.close()
 
-        pi2remote_command = subprocess.Popen(["scp", myfile, remote_details]) 
+        pi2remote_command = subprocess.Popen(["scp", file_name, remote_details]) 
         pi2remote_status  = os.waitpid(pi2remote_command.pid, 0)
 
         kill()
 
 # Termination
 def kill():
+  pi2remote_command = subprocess.Popen(["scp", file_name, remote_details]) 
+  pi2remote_status  = os.waitpid(pi2remote_command.pid, 0)
+
+  time.sleep(3)
+
   quit()
 
 # Start the main program
