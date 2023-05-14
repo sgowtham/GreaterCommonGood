@@ -68,7 +68,9 @@ counter_max     = int(sys.argv[2])
 device_location = '/sys/bus/w1/devices/'
 
 # Open the file for recording data
-# If a file by the same name exists, the contents will be overwritten
+# Given that the file_name uses the timestamp (including seconds) and since any
+# given attempt of this workflow takes more than one second to run/complete, it
+# is unlikely that any two runs will have the exact same file_name
 date_time        = datetime.datetime.now()
 date_time        = date_time.strftime("%Y%m%d_%H%M%S")
 file_name        = str(location) + '_' + str(date_time) + '_SnowTemperature.dat' 
