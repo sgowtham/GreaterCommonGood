@@ -121,9 +121,11 @@ def read(ds18b20):
   file_contents_sensor = file_handle_sensor.read()
   file_handle_sensor.close()
 
-  # The releavant information is in the second line of this file
-  # The 10th field in the second line when separated by space and looks like t=#####
-  # t=##### is converted to a floating-point number for further processing
+  # The releavant information is in the second line of 'w1_slave' file
+  # The 10th field in the second line when separated by space looks like t=#####
+  # ##### in t-##### is the temperature data we desire/need
+  # ##### is extracted from t-####, converted to a floating-point number for
+  # further processing
   second_line      = file_contents_sensor.split("\n")[1]
   temperature_data = second_line.split(" ")[9]
   temperature      = float(temperature_data[2:])
@@ -206,16 +208,17 @@ def loop(ds18b20):
         file_name_handle.close()
 
         # Change the file_name's timestamp and transfer the data
+        # The second and third rsync commands do not transfer anything unless
+        # the first (or second) rsync command transferred partial data for some
+        # reason
         os.system('touch -t %s %s' % (file_touch_time, file_name))
+        os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+        os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
         os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
 
         # Terminate the program
         time.sleep(1)
-        kill()
-
-# Termination
-def kill():
-  quit()
+        quit()
 
 # Start the main program
 # Include handling when CTRL+C is pressed to terminate
@@ -233,9 +236,13 @@ if __name__ == '__main__':
     file_name_handle.close()
 
     # Change the file_name's timestamp and transfer the data
+    # The second and third rsync commands do not transfer anything unless the
+    # first (or second) rsync command transferred partial data for some reason
     os.system('touch -t %s %s' % (file_touch_time, file_name))
+    os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+    os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
     os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
 
     # Terminate the program
     time.sleep(1)
-    kill()
+    quit()
