@@ -21,7 +21,8 @@
 sleep_timer     = 55
 remote_username = "sgowtham"
 remote_server   = "sgowtham.com"
-remote_folder   = "/var/www/sgowtham/assets/analytics/RaspberryPi"
+remote_folder   = "/var/www/sgowtham/assets/analytics/RaspberryPi/"
+remote_details  = str(remote_username) + '@' + str(remote_server) + ':' + str(remote_folder)
 
 
 # PLEASE DO NOT EDIT BELOW THIS LINE
@@ -118,9 +119,10 @@ def loop(ds18b20):
 
   # Open the file for recording data
   # If a file by the same name exists, the contents will be overwritten
-  date_time      = datetime.datetime.now()
-  date_time      = date_time.strftime("%Y%m%d_%H%M%S")
-  file_name_data = open("%s_%s_SnowTemperature.dat" % (location, date_time), "w")
+  date_time        = datetime.datetime.now()
+  date_time        = date_time.strftime("%Y%m%d_%H%M%S")
+  file_name        = str(location) + '_' + str(date_time) + '_SnowTemperature.dat' 
+  file_name_handle = open(file_name, "w")
 
   # Comment the print statements below to save some resoures, if need be
   print("")
@@ -131,12 +133,12 @@ def loop(ds18b20):
   print("")
 
   # Header information (entered as comments)
-  file_name_data.write("#\n")
-  file_name_data.write("# Filename : %s_%s_SnowTemperature.dat\n" % (location, date_time))
-  file_name_data.write("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B\n")
-  file_name_data.write("# Format   : ID, Time Stamp, Celsius, Fahrenheit\n")
-  file_name_data.write("#            Fields are separated by the | character\n")
-  file_name_data.write("#\n")
+  file_name_handle.write("#\n")
+  file_name_handle.write("# Filename : %s_%s_SnowTemperature.dat\n" % (location, date_time))
+  file_name_handle.write("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B\n")
+  file_name_handle.write("# Format   : ID, Time Stamp, Celsius, Fahrenheit\n")
+  file_name_handle.write("#            Fields are separated by the | character\n")
+  file_name_handle.write("#\n")
 
   # Initiate the counter
   counter = 0
@@ -158,7 +160,7 @@ def loop(ds18b20):
       print("%04d|%19s|%06.3f|%06.3f" % (counter, date_time, celsius, fahrenheit))
 
       # Record the data in the file
-      file_name_data.write("%04d|%19s|%06.3f|%06.3f\n" % (counter, date_time, celsius, fahrenheit))
+      file_name_handle.write("%04d|%19s|%06.3f|%06.3f\n" % (counter, date_time, celsius, fahrenheit))
 
       # Pause/Sleep for sleep_timer seconds
       time.sleep(sleep_timer)
@@ -173,9 +175,10 @@ def loop(ds18b20):
         print("")
 
         # Close the file, transfer the data and terminate the program
-        file_name_data.close()
+        file_name_handle.close()
 
- 
+        pi2remote_command = subprocess.Popen(["scp", myfile, remote_details]) 
+        pi2remote_status  = os.waitpid(pi2remote_command.pid, 0)
 
         kill()
 
