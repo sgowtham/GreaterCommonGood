@@ -151,7 +151,7 @@ def read_record_sleep_repeat(ds18b20):
   print("# Filename  : %s" % (file_name))
   print("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)")
   print("# Sensor ID : %s" % sensor_id)
-  print("# Format    : ID, Sensor ID, Time Stamp, Celsius, Fahrenheit")
+  print("# Format    : Measurement ID, Sensor ID, Time Stamp, Celsius, Fahrenheit")
   print("#             Fields are separated by the | character")
   print("#")
   print("# Upon successful completion, the recording may be viewed at")
@@ -166,8 +166,8 @@ def read_record_sleep_repeat(ds18b20):
   file_name_handle.write("#\n")
   file_name_handle.write("# Filename  : %s\n" % (file_name))
   file_name_handle.write("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)\n")
-  file_name_handle.write("# Sensor ID : %s" % sensor_id)
-  file_name_handle.write("# Format    : ID, Sensor ID, Time Stamp, Celsius, Fahrenheit\n")
+  file_name_handle.write("# Sensor ID : %s\n" % sensor_id)
+  file_name_handle.write("# Format    : Measurement ID, Sensor ID, Time Stamp, Celsius, Fahrenheit\n")
   file_name_handle.write("#             Fields are separated by the | character\n")
   file_name_handle.write("#\n")
   file_name_handle.write("# Upon successful completion, the file may be viewed at\n")
@@ -201,6 +201,12 @@ def read_record_sleep_repeat(ds18b20):
 
       # Pause/Sleep for sleep_timer seconds
       time.sleep(sleep_timer)
+
+      # Once every 5 measurements (i.e., approximately 5 minutes), save the data
+      # to the hard drive to prevent loss of recorded measurements in case of an
+      # accidental power outage (or other such scenario)
+      if counter % 5 == 0:
+        file_name_handle.flush()
 
       # If counter_max measurements have been made, then stop the program
       if counter == counter_max:
