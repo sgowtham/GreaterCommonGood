@@ -1,16 +1,31 @@
 # SnowTemperature.py
 #
-# Python script to read and store the data from DS18B20 temperature sensor
-# in Raspberry Pi 3 Model B (circa 2015). The parent BASH script,
-# ./SnowTemperature.sh, will run this Python script. Running the Python script
-# by itself will not transfer the recorded data to a designated remote server
-# for archival and post-processing purposes.
+# Python script to read from the DS18B20 temperature sensor in Raspberry Pi 3
+# Model B (circa 2015). The measurements are saved in a meaningfully named file
+# and transferred to a designated remote server for archival and post-processing
+# purposes.
 #
 # Usage:
-# ./SnowTemperature.sh LOCATION COUNTER_MAX
+# python3 ./SnowTemperature.py LOCATION COUNTER_MAX
 #
 # If a Python LIBRARY is missing, the following command may be used:
 # python3 -m pip install LIBRARY
+
+# Variables (edit if/when necessary)
+# sleep_timer represents the number of seconds between successive measurements
+# remote_username and remote_server represent the credentials of the designated
+# remote server which will host the recorded data for archival and
+# post-processing purposes. The setup assumes that passwordless data transfer
+# is configured/enabled between the RaspberryPi and remote server using the 
+# SSH keys
+sleep_timer     = 55
+remote_username = "sgowtham"
+remote_server   = "sgowtham.com"
+remote_folder   = "/var/www/sgowtham/assets/analytics/RaspberryPi"
+
+
+# PLEASE DO NOT EDIT BELOW THIS LINE
+# UNLESS THERE IS AN ABSOLUTE NEED
 
 # Necessary libraries
 import datetime
@@ -20,6 +35,7 @@ import numpy as np
 import os
 import random
 import re
+import subprocess
 import sys
 import time
 
@@ -40,14 +56,12 @@ if len(sys.argv) != 3:
 os.system('sudo modprobe w1-gpio')
 os.system('sudo modprobe w1-therm')
 
-# Variables
+# Variables from the command line
 # location is used in creating a file to store the recordings
 # counter_max represents the number of measurements - taken approximately once
 # every minute
-# sleep_timer represents the number of seconds between successive measurements
 location    = sys.argv[1]
 counter_max = sys.argv[2]
-sleep_timer = 55
 
 # Function declarations
 
@@ -158,8 +172,11 @@ def loop(ds18b20):
         print("# Recording will be stopped and the program will terminate")
         print("")
 
-        # Close the file and terminate the program
+        # Close the file, transfer the data and terminate the program
         file_name_data.close()
+
+ 
+
         kill()
 
 # Termination
