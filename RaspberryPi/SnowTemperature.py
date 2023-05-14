@@ -5,6 +5,10 @@
 # file and transferred to a designated remote server for archival and
 # post-processing purposes.
 #
+# TODO:
+# Use sensor_id in the filename, if need be (when multiple sensors are used),
+# and remove the sensor_id column from the recorded data
+#
 # Usage:
 # python3 ./SnowTemperature.py LOCATION COUNTER_MAX
 #
@@ -54,25 +58,23 @@ if len(sys.argv) != 3:
   print("")
   sys.exit()
 
-# System operations (if necessary)
-os.system('sudo modprobe w1-gpio')
-os.system('sudo modprobe w1-therm')
-
 # Additional variables
 # location is used in creating a file to store the recordings
 # counter_max represents the number of measurements - taken approximately once
 # every minute
 # device_location is where external sensor data is stored in Raspeberry Pi
+# date_time is the timestamp used for uniquely naming the file that stores the
+# measurements
 location        = str(sys.argv[1])
 counter_max     = int(sys.argv[2])
 device_location = '/sys/bus/w1/devices/'
+date_time       = datetime.datetime.now()
+date_time       = date_time.strftime("%Y%m%d_%H%M%S")
 
 # Open the file for recording data
 # Given that the file_name uses the timestamp (including seconds) and since any
 # given attempt of this workflow takes more than one second to run/complete, it
 # is unlikely that any two runs will have the exact same file_name
-date_time        = datetime.datetime.now()
-date_time        = date_time.strftime("%Y%m%d_%H%M%S")
 file_name        = str(location) + '_' + str(date_time) + '_SnowTemperature.dat' 
 file_touch_time  = date_time[:-2]
 file_touch_time  = file_touch_time.replace("_", "")
@@ -89,11 +91,11 @@ file_name_handle = open(file_name, "w")
 # If no sensor is detected, stop the workflow with a helpful error message
 # TODO:
 # Test with multiple DS18B20 sensors
-def sensor():
+def detect_sensor():
   ds18b20_sensors = glob.glob(device_location + '28*')
   if len(ds18b20_sensors) > 0:
-    for i in glob.glob(device_location + '28*'):
-      ds18b20 = i.split("/")[-1]
+    for sensor in glob.glob(device_location + '28*'):
+      ds18b20 = sensor.split("/")[-1]
       # Uncomment the line below for debugging purposes only
       # print(ds18b20)
     return ds18b20
@@ -112,11 +114,12 @@ def sensor():
 
 # Read the temperature data (in Celsius) from the sensor's 'w1_slave' file and
 # convert it to Fahrenheit
-def read(ds18b20):
+def read_temperature(ds18b20):
 
   # DS18B20 stores temperature for each sensor in a file called 'w1_slave'
   # Read the contents of this file and close
-  file_name_sensor     = '/sys/bus/w1/devices/' + ds18b20 + '/w1_slave'
+  sensor_id            = str(ds18b20)
+  file_name_sensor     = '/sys/bus/w1/devices/' + str(sensor_id) + '/w1_slave'
   file_handle_sensor   = open(file_name_sensor)
   file_contents_sensor = file_handle_sensor.read()
   file_handle_sensor.close()
@@ -138,14 +141,18 @@ def read(ds18b20):
   return celsius, fahrenheit
 
 # Keep looping through every sleep_timer seconds and process the data
-def loop(ds18b20):
+def read_record_sleep_repeat(ds18b20):
+
+  # Sensor's ID
+  sensor_id = str(ds18b20)
 
   # Comment the print statements below to save some resoures, if need be
   print("")
-  print("# Filename : %s" % (file_name))
-  print("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)")
-  print("# Format   : ID, Time Stamp, Celsius, Fahrenheit")
-  print("#            Fields are separated by the | character")
+  print("# Filename  : %s" % (file_name))
+  print("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)")
+  print("# Sensor ID : %s") % sensor_id)
+  print("# Format    : ID, Sensor ID, Time Stamp, Celsius, Fahrenheit")
+  print("#             Fields are separated by the | character")
   print("#")
   print("# Upon successful completion, the recording may be viewed at")
   print("# %s/%s" % (remote_website, file_name))
@@ -157,10 +164,11 @@ def loop(ds18b20):
 
   # Header information (entered as comments)
   file_name_handle.write("#\n")
-  file_name_handle.write("# Filename : %s\n" % (file_name))
-  file_name_handle.write("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)\n")
-  file_name_handle.write("# Format   : ID, Time Stamp, Celsius, Fahrenheit\n")
-  file_name_handle.write("#            Fields are separated by the | character\n")
+  file_name_handle.write("# Filename  : %s\n" % (file_name))
+  file_name_handle.write("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)\n")
+  file_name_handle.write("# Sensor ID : %s") % sensor_id)
+  file_name_handle.write("# Format    : ID, Sensor ID, Time Stamp, Celsius, Fahrenheit\n")
+  file_name_handle.write("#             Fields are separated by the | character\n")
   file_name_handle.write("#\n")
   file_name_handle.write("# Upon successful completion, the file may be viewed at\n")
   file_name_handle.write("# %s/%s\n" % (remote_website, file_name))
@@ -175,21 +183,21 @@ def loop(ds18b20):
   # Run the loop indefinitely (or in other words, until counter_max number of 
   # measurements have been recorded OR until CTRL+C is pressed)
   while True:
-    if read(ds18b20) != None:
+    if read_temperature(ds18b20) != None:
       # Increment the counter
       counter = counter + 1
 
-      # Capture the current time stamp and temperature
+      # Set the current timestamp and temperature
       date_time  = datetime.datetime.now()
       date_time  = date_time.strftime("%Y-%m-%d %H:%M:%S")
-      celsius    = read(ds18b20)[0]
-      fahrenheit = read(ds18b20)[1]
+      celsius    = read_temperature(ds18b20)[0]
+      fahrenheit = read_temperature(ds18b20)[1]
 
       # Comment the Terminal display to save some resoures, if need be
-      print("%04d|%19s|%07.3f|%07.3f" % (counter, date_time, celsius, fahrenheit))
+      print("%04d|%s|%19s|%07.3f|%07.3f" % (counter, sensor_id, date_time, celsius, fahrenheit))
 
       # Record the data in the file
-      file_name_handle.write("%04d|%19s|%07.3f|%07.3f\n" % (counter, date_time, celsius, fahrenheit))
+      file_name_handle.write("%04d|%s|%19s|%07.3f|%07.3f\n" % (counter, sensor_id, date_time, celsius, fahrenheit))
 
       # Pause/Sleep for sleep_timer seconds
       time.sleep(sleep_timer)
@@ -200,8 +208,9 @@ def loop(ds18b20):
         # Comment the print statements below to save some resoures, if need be
         print("")
         print("# %d measurements have been recorded" % (counter_max))
-        print("# Recording will be stopped and the program will terminate")
-        print("# after trasnferring the file to a designated remote server")
+        print("# Recording will stopp and the program will terminate after")
+        print("# trasnferring the file to a designated remote server for")
+        print("# archival and post-processing purposes")
         print("")
 
         # Close the file
@@ -225,11 +234,11 @@ def loop(ds18b20):
 if __name__ == '__main__':
 
   try:
-    # Gather the sensor's serial number
-    serialNum = sensor()
+    # Gather the sensor's ID
+    sensor_id = detect_sensor()
 
     # Run the loop to gather measurements
-    loop(serialNum)
+    read_record_sleep_repeat(sensor_id)
 
   except KeyboardInterrupt:
     # Close the file
