@@ -1,0 +1,11 @@
+#
+# Filename : CableWI_20230514_165555_SnowTemperature.dat
+# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B
+# Format   : ID, Time Stamp, Celsius, Fahrenheit
+#            Fields are separated by the | character
+#
+0001|2023-05-14 16:55:55|03.562|38.412
+0002|2023-05-14 16:56:53|04.062|39.200
+0003|2023-05-14 16:57:50|06.312|43.362
+0004|2023-05-14 16:58:48|08.312|46.962
+0005|2023-05-14 16:59:45|09.937|49.887

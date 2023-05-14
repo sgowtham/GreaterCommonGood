@@ -1,9 +1,9 @@
 # SnowTemperature.py
 #
 # Python script to read from the DS18B20 temperature sensor in Raspberry Pi 3
-# Model B (circa 2015). The measurements are saved in a meaningfully named file
-# and transferred to a designated remote server for archival and post-processing
-# purposes.
+# Model B V1.2 (circa 2015). The measurements are saved in a meaningfully named
+# file and transferred to a designated remote server for archival and
+# post-processing purposes.
 #
 # Usage:
 # python3 ./SnowTemperature.py LOCATION COUNTER_MAX
@@ -22,6 +22,8 @@ sleep_timer     = 55
 remote_username = "sgowtham"
 remote_server   = "sgowtham.com"
 remote_folder   = "/var/www/sgowtham/assets/analytics/RaspberryPi/"
+remote_website  = "https://sgowtham.com/assets/analytics/RaspberryPi"
+github_repo     = "https://github.com/sgowtham/GreaterCommonGood/tree/main/RaspberryPi"
 remote_details  = str(remote_username) + '@' + str(remote_server) + ':' + str(remote_folder)
 
 
@@ -130,18 +132,32 @@ def loop(ds18b20):
 
   # Comment the print statements below to save some resoures, if need be
   print("")
-  print("# Filename : %s_%s_SnowTemperature.dat" % (location, date_time))
-  print("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B")
+  print("# Filename : %s" % (file_name))
+  print("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)")
   print("# Format   : ID, Time Stamp, Celsius, Fahrenheit")
   print("#            Fields are separated by the | character")
+  print("")
+  print("# Upon successful completion, the recording may be viewed at")
+  print("# %s/%s" % (remote_website, file_name))
+  print("")
+  print("# and at the following public GitHub repository")
+  print("# %s" % (github_repo))
+  print("")
   print("")
 
   # Header information (entered as comments)
   file_name_handle.write("#\n")
-  file_name_handle.write("# Filename : %s_%s_SnowTemperature.dat\n" % (location, date_time))
-  file_name_handle.write("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B\n")
+  file_name_handle.write("# Filename : %s\n" % (file_name))
+  file_name_handle.write("# Sensor   : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)\n")
   file_name_handle.write("# Format   : ID, Time Stamp, Celsius, Fahrenheit\n")
   file_name_handle.write("#            Fields are separated by the | character\n")
+  file_name_handle.write("#\n")
+  file_name_handle.write("# Upon successful completion, the file may be viewed at\n")
+  file_name_handle.write("# %s/%s\n" % (remote_website, file_name))
+  file_name_handle.write("#\n")
+  file_name_handle.write("# and at the following public GitHub repository\n")
+  file_name_handle.write("# %s\n" % (github_repo))
+  file_name_handle.write("#\n")
   file_name_handle.write("#\n")
 
   # Initiate the counter
@@ -176,6 +192,7 @@ def loop(ds18b20):
         print("")
         print("# %d measurements have been recorded" % (counter_max))
         print("# Recording will be stopped and the program will terminate")
+        print("# after trasnferring the file to a designated remote server")
         print("")
 
         # Close the file, transfer the data and terminate the program
