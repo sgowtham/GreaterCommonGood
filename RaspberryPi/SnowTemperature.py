@@ -186,10 +186,10 @@ def loop(ds18b20):
       fahrenheit = read(ds18b20)[1]
 
       # Comment the Terminal display to save some resoures, if need be
-      print("%04d|%19s|%06.3f|%06.3f" % (counter, date_time, celsius, fahrenheit))
+      print("%04d|%19s|%07.3f|%07.3f" % (counter, date_time, celsius, fahrenheit))
 
       # Record the data in the file
-      file_name_handle.write("%04d|%19s|%06.3f|%06.3f\n" % (counter, date_time, celsius, fahrenheit))
+      file_name_handle.write("%04d|%19s|%07.3f|%07.3f\n" % (counter, date_time, celsius, fahrenheit))
 
       # Pause/Sleep for sleep_timer seconds
       time.sleep(sleep_timer)
