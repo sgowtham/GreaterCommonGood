@@ -61,8 +61,8 @@ os.system('sudo modprobe w1-therm')
 # location is used in creating a file to store the recordings
 # counter_max represents the number of measurements - taken approximately once
 # every minute
-location    = sys.argv[1]
-counter_max = sys.argv[2]
+location    = str(sys.argv[1])
+counter_max = int(sys.argv[2])
 
 # Function declarations
 
@@ -78,7 +78,7 @@ def sensor():
   if len(ds18b20_sensors) > 0:
     for i in glob.glob(device_location + '28*'):
       ds18b20 = i.split("/")[-1]
-      print(ds18b20)
+      # print(ds18b20)
     return ds18b20
   else:
     print("")
@@ -105,16 +105,20 @@ def read(ds18b20):
   file_handle_sensor.close()
 
   # The releavant information is in the second line of this file
+  # The 10th field in the second line when separated by space and looks like t=#####
+  # t=##### is converted to a floating-point number for further processing
   second_line      = file_contents_sensor.split("\n")[1]
   temperature_data = second_line.split(" ")[9]
   temperature      = float(temperature_data[2:])
 
+  # Convert the temperature above to Celsius, and then to Fahrenheit
   celsius    = temperature / 1000
   fahrenheit = (celsius * 1.8) + 32
 
+  # Return the values of celsius and fahrenheit
   return celsius, fahrenheit
 
-# Keep looping through every 3 seconds and process the data
+# Keep looping through every sleep_timer seconds and process the data
 def loop(ds18b20):
 
   # Open the file for recording data
@@ -184,11 +188,6 @@ def loop(ds18b20):
 
 # Termination
 def kill():
-  pi2remote_command = subprocess.Popen(["scp", file_name, remote_details]) 
-  pi2remote_status  = os.waitpid(pi2remote_command.pid, 0)
-
-  time.sleep(3)
-
   quit()
 
 # Start the main program
