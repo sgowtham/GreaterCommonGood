@@ -227,14 +227,14 @@ def read_record_rest_repeat(ds18b20):
 
         # Archive the file_name to a designated remote server after updating
         # its timestamp
-        archive_file(file_name, file_date_time, remote_details):
+        archive_recorded_data(file_name, file_date_time, remote_details):
 
         # Terminate the program
         quit()
 
 # Transfer the file (with recorded measurements) to the designated remote
 # server for archival and post-processing purposes
-def archive_file(file_name, file_date_time, remote_details):
+def archive_recorded_data(file_name, file_date_time, remote_details):
 
   # Change the file_name's timestamp to file_date_time
   os.system('touch -t %s %s' % (file_date_time, file_name))
@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
     # Archive the file to a designated remote server after updating its
     # timestamp
-    archive_file(file_name, file_date_time, remote_details):
+    archive_recorded_data(file_name, file_date_time, remote_details):
 
     # Terminate the program
     quit()
