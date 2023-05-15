@@ -243,10 +243,10 @@ def archive_recorded_data(file_name, file_date_time, remote_details):
   # post-processing purposes. The second and third rsync commands do not
   # transfer anything unless the first (or second) rsync command transferred
   # partial data for some reason (e.g., network issues, etc.)
-  # TODO: Remove the 'v' in -'ave' to make the output non-verbose
-  os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
-  os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
-  os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+  # TODO: Make '-ae' to '-ave' to make the output non-verbose
+  os.system('rsync -ae ssh -hPz %s %s' % (file_name, remote_details))
+  os.system('rsync -ae ssh -hPz %s %s' % (file_name, remote_details))
+  os.system('rsync -ae ssh -hPz %s %s' % (file_name, remote_details))
 
   # Sleep for 1 second
   time.sleep(1)
