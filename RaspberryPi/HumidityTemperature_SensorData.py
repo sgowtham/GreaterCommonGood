@@ -202,9 +202,6 @@ def read_record_rest_repeat(ds18b20):
       # Record the data in the file
       file_name_handle.write("%04d|%s|%19s|%07.3f|%07.3f\n" % (counter, sensor_id, date_time, celsius, fahrenheit))
 
-      # Pause/Sleep for sleep_timer seconds
-      time.sleep(sleep_timer)
-
       # Once every 5 measurements (i.e., approximately 5 minutes), save the
       # data to the hard drive to prevent loss of recorded measurements in case
       # of an accidental power outage (or other such scenario)
@@ -231,6 +228,9 @@ def read_record_rest_repeat(ds18b20):
 
         # Terminate the program
         quit()
+
+      # Pause/Sleep for sleep_timer seconds
+      time.sleep(sleep_timer)
 
 # Transfer the file (with recorded measurements) to the designated remote
 # server for archival and post-processing purposes
