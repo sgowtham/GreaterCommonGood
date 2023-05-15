@@ -129,9 +129,9 @@ def read_temperature(ds18b20):
 
   # The releavant information is in the second line of 'w1_slave' file
   # The 10th field in the second line when separated by space looks like
-  # t=#####. The ##### in t-##### is the temperature data we desire/need #####
-  # is extracted from t-####, converted to a floating-point number for further
-  # processing
+  # t=#####. The ##### in t-##### is the temperature data we desire/need. The
+  # ##### is extracted from t-####, converted to a floating-point number for
+  # further processing
   second_line      = file_contents_sensor.split("\n")[1]
   temperature_data = second_line.split(" ")[9]
   temperature      = float(temperature_data[2:])
