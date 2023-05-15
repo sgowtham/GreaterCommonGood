@@ -227,7 +227,7 @@ def read_record_rest_repeat(ds18b20):
 
         # Archive the file_name to a designated remote server after updating
         # its timestamp
-        archive_recorded_data(file_name, file_date_time, remote_details):
+        archive_recorded_data(file_name, file_date_time, remote_details)
 
         # Terminate the program
         quit()
@@ -268,7 +268,7 @@ if __name__ == '__main__':
 
     # Archive the file to a designated remote server after updating its
     # timestamp
-    archive_recorded_data(file_name, file_date_time, remote_details):
+    archive_recorded_data(file_name, file_date_time, remote_details)
 
     # Terminate the program
     quit()
