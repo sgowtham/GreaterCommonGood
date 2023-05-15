@@ -1,22 +1,25 @@
-# SnowTemperature.py
+# HumidityTemperature_SensorData.py
 #
 # Python script to read from the DS18B20 temperature sensor in Raspberry Pi 3
 # Model B V1.2 (circa 2015). The measurements are saved in a meaningfully named
-# file and transferred to a designated remote server for archival and
-# post-processing purposes.
+# file (e.g., LOCATION_TIMESTAMP_HumidityTemperature_SensorData.dat) and
+# transferred to a designated remote server for archival and post-processing
+# purposes. 
 #
 # TODO:
 # Use sensor_id in the filename, if need be (when multiple sensors are used),
 # and remove the sensor_id column from the recorded data
 #
 # Usage:
-# python3 ./SnowTemperature.py LOCATION COUNTER_MAX
+# python3 ./HumidityTemperature_SensorData.py LOCATION COUNTER_MAX
 #
 # If a Python LIBRARY is missing, the following command may be used:
 # python3 -m pip install LIBRARY
 
 # Variables (edit if/when necessary)
 # sleep_timer represents the number of seconds between successive measurements
+# Raspberry Pi and the sensor take 2-3 additional seconds making the interval
+# between measurements approximately 1 minute
 # remote_username and remote_server represent the credentials of the designated
 # remote server which will host the recorded data for archival and
 # post-processing purposes. The setup assumes that passwordless data transfer
@@ -27,7 +30,7 @@ remote_username = "sgowtham"
 remote_server   = "sgowtham.com"
 remote_folder   = "/var/www/sgowtham/assets/analytics/RaspberryPi/"
 remote_website  = "https://sgowtham.com/assets/analytics/RaspberryPi"
-github_repo     = "https://github.com/sgowtham/GreaterCommonGood/tree/main/RaspberryPi"
+github_repo     = "https://github.com/sgowtham/GreaterCommonGood/"
 remote_details  = str(remote_username) + '@' + str(remote_server) + ':' + str(remote_folder)
 
 
@@ -75,7 +78,7 @@ date_time       = date_time.strftime("%Y%m%d_%H%M%S")
 # Given that the file_name uses the timestamp (including seconds) and since any
 # given attempt of this workflow takes more than one second to run/complete, it
 # is unlikely that any two runs will have the exact same file_name
-file_name        = str(location) + '_' + str(date_time) + '_SnowTemperature.dat' 
+file_name        = str(location) + '_' + str(date_time) + '_HumidityTemperature_SensorData.dat' 
 file_touch_time  = date_time[:-2]
 file_touch_time  = file_touch_time.replace("_", "")
 file_name_handle = open(file_name, "w")
@@ -141,7 +144,7 @@ def read_temperature(ds18b20):
   return celsius, fahrenheit
 
 # Keep looping through every sleep_timer seconds and process the data
-def read_record_sleep_repeat(ds18b20):
+def read_record_rest_repeat(ds18b20):
 
   # Sensor's ID
   sensor_id = str(ds18b20)
@@ -157,7 +160,7 @@ def read_record_sleep_repeat(ds18b20):
   print("# Upon successful completion, the recording may be viewed at")
   print("# %s/%s" % (remote_website, file_name))
   print("#")
-  print("# and at the following public GitHub repository")
+  print("# and under the RaspberryPi folder at the following public GitHub repository")
   print("# %s" % (github_repo))
   print("")
   print("")
@@ -244,7 +247,7 @@ if __name__ == '__main__':
     sensor_id = detect_sensor()
 
     # Run the loop to gather measurements
-    read_record_sleep_repeat(sensor_id)
+    read_record_rest_repeat(sensor_id)
 
   except KeyboardInterrupt:
     # Close the file
