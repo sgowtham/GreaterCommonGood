@@ -7,8 +7,12 @@
 # purposes. 
 #
 # TODO:
-# Use sensor_id in the filename, if need be (when multiple sensors are used),
-# and remove the sensor_id column from the recorded data
+# 1. Use sensor_id in the filename, if need be (when multiple sensors are
+#    used), and remove the sensor_id column from the recorded data
+# 2. Incorporate multiple DS18B20 Temperature Sensors
+# 3. Incorporate the SHTC3 Air Temperature and Humidity Sensor
+# 4. Find and incorporate a probe-able snowthermohygrometer that can 'send' its
+#    data
 #
 # Usage:
 # python3 ./HumidityTemperature_SensorData.py LOCATION COUNTER_MAX
@@ -31,7 +35,8 @@ remote_server   = "sgowtham.com"
 remote_folder   = "/var/www/sgowtham/assets/analytics/RaspberryPi/"
 remote_website  = "https://sgowtham.com/assets/analytics/RaspberryPi"
 github_repo     = "https://github.com/sgowtham/GreaterCommonGood/"
-remote_details  = str(remote_username) + '@' + str(remote_server) + ':' + str(remote_folder)
+remote_details  = str(remote_username) + '@' + str(remote_server)
+remote_details  = str(remote_details) + ':' + str(remote_folder)
 
 
 # PLEASE DO NOT EDIT BELOW THIS LINE UNLESS THERE IS AN ABSOLUTE NEED
@@ -84,14 +89,11 @@ file_name_handle = open(file_name, "w")
 
 # Function declarations
 
-# List of DS18B20 sensors
 # Files related to any given DS18B20 sensor reside in a folder that has the
 # following naming format: 28-030497940a6a 
 # '28-' is common to all DS18B20 sensors (when multiple are wired in) and that
 # the '28-*' folder resides under '/sys/bus/w1/devices/' in Raspberry Pi.
 # If no sensor is detected, stop the workflow with a helpful error message
-# TODO:
-# Test with multiple DS18B20 sensors
 def detect_sensor():
   ds18b20_sensors = glob.glob(device_location + '28*')
   if len(ds18b20_sensors) > 0:
@@ -113,8 +115,8 @@ def detect_sensor():
     print("")
     sys.exit()
 
-# Read the temperature data (in Celsius) from the sensor's 'w1_slave' file and
-# convert it to Fahrenheit
+# Read the temperature data from the sensor's 'w1_slave' file and convert it to
+# Celsius and Fahrenheit
 def read_temperature(ds18b20):
 
   # DS18B20 stores temperature for each sensor in a file called 'w1_slave'
@@ -126,17 +128,17 @@ def read_temperature(ds18b20):
   file_handle_sensor.close()
 
   # The releavant information is in the second line of 'w1_slave' file
-  # The 10th field in the second line when separated by space looks like t=#####
-  # ##### in t-##### is the temperature data we desire/need
-  # ##### is extracted from t-####, converted to a floating-point number for
-  # further processing
+  # The 10th field in the second line when separated by space looks like
+  # t=#####. The ##### in t-##### is the temperature data we desire/need #####
+  # is extracted from t-####, converted to a floating-point number for further
+  # processing
   second_line      = file_contents_sensor.split("\n")[1]
   temperature_data = second_line.split(" ")[9]
   temperature      = float(temperature_data[2:])
 
   # Convert the temperature above to Celsius, and then to Fahrenheit
   celsius    = temperature / 1000
-  fahrenheit = (celsius * 1.8) + 32
+  fahrenheit = (celsius * 1.80) + 32.00
 
   # Return the values of celsius and fahrenheit
   return celsius, fahrenheit
@@ -152,7 +154,7 @@ def read_record_rest_repeat(ds18b20):
   print("# Filename  : %s" % (file_name))
   print("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)")
   print("# Sensor ID : %s" % sensor_id)
-  print("# Format    : Measurement ID, Sensor ID, Time Stamp, Celsius, Fahrenheit")
+  print("# Format    : Counter, Sensor ID, Time Stamp, Celsius, Fahrenheit")
   print("#             Fields are separated by the | character")
   print("#")
   print("# Upon successful completion, the recording may be viewed at")
@@ -168,7 +170,7 @@ def read_record_rest_repeat(ds18b20):
   file_name_handle.write("# Filename  : %s\n" % (file_name))
   file_name_handle.write("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)\n")
   file_name_handle.write("# Sensor ID : %s\n" % sensor_id)
-  file_name_handle.write("# Format    : Measurement ID, Sensor ID, Time Stamp, Celsius, Fahrenheit\n")
+  file_name_handle.write("# Format    : Counter, Sensor ID, Time Stamp, Celsius, Fahrenheit\n")
   file_name_handle.write("#             Fields are separated by the | character\n")
   file_name_handle.write("#\n")
   file_name_handle.write("# Upon successful completion, the file may be viewed at\n")
@@ -203,9 +205,9 @@ def read_record_rest_repeat(ds18b20):
       # Pause/Sleep for sleep_timer seconds
       time.sleep(sleep_timer)
 
-      # Once every 5 measurements (i.e., approximately 5 minutes), save the data
-      # to the hard drive to prevent loss of recorded measurements in case of an
-      # accidental power outage (or other such scenario)
+      # Once every 5 measurements (i.e., approximately 5 minutes), save the
+      # data to the hard drive to prevent loss of recorded measurements in case
+      # of an accidental power outage (or other such scenario)
       if counter % 5 == 0:
         file_name_handle.flush()
 
@@ -223,18 +225,31 @@ def read_record_rest_repeat(ds18b20):
         # Close the file
         file_name_handle.close()
 
-        # Change the file_name's timestamp to file_date_time and transfer the
-        # data. The second and third rsync commands do not transfer anything
-        # unless the first (or second) rsync command transferred partial data
-        # for some reason (e.g., network issues, etc.)
-        os.system('touch -t %s %s' % (file_date_time, file_name))
-        os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
-        os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
-        os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+        # Archive the file_name to a designated remote server after updating
+        # its timestamp
+        archive_file(file_name, file_date_time, remote_details):
 
         # Terminate the program
-        time.sleep(1)
         quit()
+
+# Transfer the file (with recorded measurements) to the designated remote
+# server for archival and post-processing purposes
+def archive_file(file_name, file_date_time, remote_details):
+
+  # Change the file_name's timestamp to file_date_time
+  os.system('touch -t %s %s' % (file_date_time, file_name))
+
+  # Transfer the file_name to a designated remote server for archival and
+  # post-processing purposes. The second and third rsync commands do not
+  # transfer anything unless the first (or second) rsync command transferred
+  # partial data for some reason (e.g., network issues, etc.)
+  # TODO: Remove the 'v' in -'ave' to make the output non-verbose
+  os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+  os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+  os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+
+  # Sleep for 1 second
+  time.sleep(1)
 
 # Start the main program
 # Include handling when CTRL+C is pressed to terminate
@@ -251,14 +266,9 @@ if __name__ == '__main__':
     # Close the file
     file_name_handle.close()
 
-    # Change the file_name's timestamp and transfer the data
-    # The second and third rsync commands do not transfer anything unless the
-    # first (or second) rsync command transferred partial data for some reason
-    os.system('touch -t %s %s' % (file_touch_time, file_name))
-    os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
-    os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
-    os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
+    # Archive the file to a designated remote server after updating its
+    # timestamp
+    archive_file(file_name, file_date_time, remote_details):
 
     # Terminate the program
-    time.sleep(1)
     quit()
