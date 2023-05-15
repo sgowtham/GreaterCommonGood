@@ -66,23 +66,21 @@ if len(sys.argv) != 3:
 # counter_max represents the number of measurements - taken approximately once
 # every minute
 # device_location is where external sensor data is stored in Raspeberry Pi
-# date_time is the timestamp used for uniquely naming the file that stores the
-# measurements
 location        = str(sys.argv[1])
 counter_max     = int(sys.argv[2])
 device_location = '/sys/bus/w1/devices/'
-date_time       = datetime.datetime.now()
-date_time       = date_time.strftime("%Y%m%d_%H%M%S")
 
-# Open the file for recording data
-# Given that the file_name uses the timestamp (including seconds) and since any
-# given attempt of this workflow takes more than one second to run/complete, it
-# is unlikely that any two runs will have the exact same file_name
-file_name        = str(location) + '_' + str(date_time) + '_HumidityTemperature_SensorData.dat' 
-file_touch_time  = date_time[:-2]
-file_touch_time  = file_touch_time.replace("_", "")
+# Open a uniquely named file for saving the measurements for archival and
+# post-processing purposes
+# date_time is the timestamp used for uniquely naming the file that stores the
+# measurements. Since it takes at least one second to run this program (even in
+# case of errors), the timestamp used to uniquely identify the file_name for a
+# given LOCATION ignores the seconds
+file_date_time   = datetime.datetime.now()
+file_date_time   = file_date_time.strftime("%Y%m%d%H%M")
+file_name        = str(location) + '_' + str(file_date_time)
+file_name        = str(file_name) + '_HumidityTemperature_SensorData.dat' 
 file_name_handle = open(file_name, "w")
-
 
 # Function declarations
 
@@ -225,11 +223,11 @@ def read_record_rest_repeat(ds18b20):
         # Close the file
         file_name_handle.close()
 
-        # Change the file_name's timestamp and transfer the data
-        # The second and third rsync commands do not transfer anything unless
-        # the first (or second) rsync command transferred partial data for some
-        # reason
-        os.system('touch -t %s %s' % (file_touch_time, file_name))
+        # Change the file_name's timestamp to file_date_time and transfer the
+        # data. The second and third rsync commands do not transfer anything
+        # unless the first (or second) rsync command transferred partial data
+        # for some reason (e.g., network issues, etc.)
+        os.system('touch -t %s %s' % (file_date_time, file_name))
         os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
         os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
         os.system('rsync -ave ssh -hPz %s %s' % (file_name, remote_details))
