@@ -32,11 +32,11 @@
 sleep_timer     = 55
 remote_username = "sgowtham"
 remote_server   = "sgowtham.com"
-remote_folder   = "/var/www/sgowtham/assets/analytics/RaspberryPi/"
+remote_folder   = "/var/www/sgowtham/assets/RaspberryPi/"
 remote_website  = "https://sgowtham.com/assets/RaspberryPi"
 github_repo     = "https://github.com/sgowtham/GreaterCommonGood/"
 remote_details  = str(remote_username) + '@' + str(remote_server)
-remote_details  = str(remote_details) + ':' + str(remote_folder)
+remote_details  = str(remote_details)  + ':' + str(remote_folder)
 
 
 # PLEASE DO NOT EDIT BELOW THIS LINE UNLESS THERE IS AN ABSOLUTE NEED
