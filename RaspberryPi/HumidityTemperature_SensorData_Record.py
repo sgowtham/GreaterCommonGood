@@ -1,4 +1,4 @@
-# HumidityTemperature_SensorData.py
+# HumidityTemperature_SensorData_Record.py
 #
 # Python script to read from the DS18B20 temperature sensor in Raspberry Pi 3
 # Model B V1.2 (circa 2015). The measurements are saved in a meaningfully named
@@ -15,7 +15,7 @@
 #    data
 #
 # Usage:
-# python3 ./HumidityTemperature_SensorData.py LOCATION COUNTER_MAX
+# python3 ./HumidityTemperature_SensorData_Record.py LOCATION COUNTER_MAX
 #
 # If a Python LIBRARY is missing, the following command may be used:
 # python3 -m pip install LIBRARY
@@ -27,7 +27,7 @@
 # remote_username and remote_server represent the credentials of the designated
 # remote server which will host the recorded data for archival and
 # post-processing purposes. The setup assumes that passwordless data transfer
-# is configured/enabled between the RaspberryPi and remote server using the 
+# is configured/enabled between the Raspberry Pi and remote server using the 
 # SSH keys
 sleep_timer     = 55
 remote_username = "sgowtham"
