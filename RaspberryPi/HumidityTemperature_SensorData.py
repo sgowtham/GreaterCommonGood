@@ -42,6 +42,8 @@ remote_details  = str(remote_details)  + ':' + str(remote_folder)
 # PLEASE DO NOT EDIT BELOW THIS LINE UNLESS THERE IS AN ABSOLUTE NEED
 
 # Necessary libraries
+# This program/script runs on a Raspberry Pi with minimal resources
+# So, import only what's absolutely necessary
 import datetime
 import glob
 import math
