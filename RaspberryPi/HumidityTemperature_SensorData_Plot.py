@@ -3,10 +3,11 @@
 # Python3 script/workflow to plot the histogram of finish times.
 #
 # Usage:
-# python3 HumidityTemperature_SensorData_Plot.py
+# python3 HumidityTemperature_SensorData_Plot.py LOCATION_TIMESTAMP
 
 # Necessary libraries
-from functions import *
+# from functions import *
+from CommonFunctions import *
 
 # Argument check
 if len(sys.argv) != 2:
