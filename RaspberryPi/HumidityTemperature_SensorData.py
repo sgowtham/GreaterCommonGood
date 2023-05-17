@@ -85,7 +85,7 @@ device_location = '/sys/bus/w1/devices/'
 # given LOCATION ignores the seconds
 file_date_time   = datetime.datetime.now()
 file_date_time   = file_date_time.strftime("%Y%m%d%H%M")
-file_name        = str(location) + '_' + str(file_date_time)
+file_name        = str(location)  + '_' + str(file_date_time)
 file_name        = str(file_name) + '_HumidityTemperature_SensorData.dat' 
 file_name_handle = open(file_name, "w")
 
