@@ -6,23 +6,25 @@
 # from CommonFunctions import *
 
 # Necessary libraries
+from bs4  import BeautifulSoup
 from lxml import html
-from bs4 import BeautifulSoup
-from re import search
-import urllib.request as request
+from re   import search
 import colorsys
 import datetime
-import time
-import re
-import os
-import sys
-import random
+import glob
 import math
 import numpy as np
+import os
 import pandas as pd
 import plotly.express as px
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
+import random
+import re
+import subprocess
+import sys
+import time
+import urllib.request as request
 
 # https://gist.github.com/bobspace/2712980
 # Customized
