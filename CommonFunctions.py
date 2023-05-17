@@ -215,4 +215,10 @@ g_line_width_trend   = 1
 g_bargap      = 0.25
 g_bargroupgap = 0.15
 g_hole        = 0.35
-
+#
+g_color_air_celsius     = '#cccccc'
+g_color_air_fahrenheit  = '#cccccc'
+g_color_air_humidity    = '#cccccc'
+g_color_snow_celsius    = '#cccccc'
+g_color_snow_fahrenheit = '#cccccc'
+g_color_snow_humidity   = '#cccccc'
