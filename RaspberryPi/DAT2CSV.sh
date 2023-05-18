@@ -93,7 +93,7 @@ file_size      ${FILE_NAME_DAT}
 # stored in a Python variable called g_color_snow_celsius (or
 # g_color_snow_fahrenheit)
 cat << EOC > ${FILE_NAME_CSV}
-# Timestamp, Snow_Celsius, Snow_Fahrenheit
+Timestamp, Snow_Celsius, Snow_Fahrenheit
 EOC
 
 # Parse the DAT file and prepare CSV file

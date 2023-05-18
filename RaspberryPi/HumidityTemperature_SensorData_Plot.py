@@ -18,7 +18,8 @@ if len(sys.argv) != 2:
   sys.exit()
 
 # Variables
-location_timestamp = sys.argv[1]
+# location_timestamp = sys.argv[1]
+location_timestamp = 'HoughtonMI_202305150543'
 file_name          = 'HumidityTemperature_SensorData'
 file_csv           = str(location_timestamp) + '_' + str(file_name) + '.csv'
 file_html          = str(location_timestamp) + '_' + str(file_name) + '.html'
@@ -37,8 +38,10 @@ config = g_config
 fig = go.Figure()
 
 for metric in df.columns[1:]:
-  metric_lc          = 'g_color_' + metric.lower()
-  metric_color_value = globals()[metric_lc]
+  metric_lc_line            = 'g_color_' + metric.lower() + '_line'
+  metric_lc_marker          = 'g_color_' + metric.lower() + '_marker'
+  metric_color_line_value   = globals()[metric_lc_line]
+  metric_color_marker_value = globals()[metric_lc_marker]
 
   fig.add_trace(go.Scatter(
                         x          = df['Timestamp'],
@@ -47,14 +50,14 @@ for metric in df.columns[1:]:
                         opacity    = 0.95,
                         mode       = 'lines+markers',
                         line_shape = 'spline',
+                        line       = dict(
+                                       color = metric_color_line_value,
+                                       width = g_line_width_single,
+                                     ),
                         marker     = dict(
-                                       color = metric_color_value,
+                                       color = metric_color_marker_value,
                                        size  = g_marker_size_single,
                                      ),
-                        line       = dict(
-                                       color = metric_color_value,
-                                       width = g_line_width_goal_single,
-                                     )
                       )
                )
 
@@ -76,6 +79,7 @@ fig.update_layout(
                                       ),
                    # https://github.com/plotly/plotly.py/issues/2393
                    yaxis            = dict(
+                                        title          = 'Temperature and Humidity',
                                         titlefont_size = g_yaxis_titlefont_size,
                                         tickfont_size  = g_yaxis_tickfont_size,
                                       ),

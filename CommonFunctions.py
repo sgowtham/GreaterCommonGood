@@ -207,18 +207,24 @@ g_yaxes_gridwidth      = 0.50
 g_yaxes_gridcolor      = '#cccccc'
 #
 # https://plotly.com/python/reference/scatter/#scatter-marker-symbol
-g_marker_size_single = 9
+g_marker_size_single = 2
 g_marker_size_trend  = 3
-g_line_width_single  = 7
+g_line_width_single  = 1
 g_line_width_trend   = 1
 #
 g_bargap      = 0.25
 g_bargroupgap = 0.15
 g_hole        = 0.35
 #
-g_color_air_celsius     = '#cccccc'
-g_color_air_fahrenheit  = '#cccccc'
-g_color_air_humidity    = '#cccccc'
-g_color_snow_celsius    = '#cccccc'
-g_color_snow_fahrenheit = '#cccccc'
-g_color_snow_humidity   = '#cccccc'
+g_color_air_celsius_line       = '#cccccc'
+g_color_air_celsius_marker     = '#cccccc'
+g_color_air_fahrenheit_line    = '#cccccc'
+g_color_air_fahrenheit_marker  = '#cccccc'
+g_color_air_humidity_line      = '#cccccc'
+g_color_air_humidity_marker    = '#cccccc'
+g_color_snow_celsius_line      = '#ff0000'
+g_color_snow_celsius_marker    = '#00ff00'
+g_color_snow_fahrenheit_line   = '#00ff00'
+g_color_snow_fahrenheit_marker = '#0000ff'
+g_color_snow_humidity_line     = '#cccccc'
+g_color_snow_humidity_marker   = '#cccccc'
