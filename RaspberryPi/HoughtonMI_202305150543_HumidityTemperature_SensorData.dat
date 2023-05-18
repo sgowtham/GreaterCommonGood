@@ -5,10 +5,13 @@
 # Format    : Counter, Sensor ID, Time Stamp, Celsius, Fahrenheit
 #             Fields are separated by the | character
 #
-# Upon successful completion, the file may be viewed at
+# Upon successful completion (of post-processing), the relevant files may be viewed at
 # https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202305150543_HumidityTemperature_SensorData.dat
+# https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202305150543_HumidityTemperature_SensorData.csv
+# https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202305150543_HumidityTemperature_SensorData.html
+# https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202305150543_HumidityTemperature_SensorData.pdf
 #
-# and at the following public GitHub repository
+# The same files are available at following public GitHub repository
 # https://github.com/sgowtham/GreaterCommonGood/
 #
 0001|28-030497940a6a|2023-05-15 05:43:05|012.000|053.487
