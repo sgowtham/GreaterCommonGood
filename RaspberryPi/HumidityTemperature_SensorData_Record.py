@@ -85,9 +85,13 @@ device_location = '/sys/bus/w1/devices/'
 # given LOCATION ignores the seconds
 file_date_time   = datetime.datetime.now()
 file_date_time   = file_date_time.strftime("%Y%m%d%H%M")
-file_name        = str(location)  + '_' + str(file_date_time)
-file_name        = str(file_name) + '_HumidityTemperature_SensorData.dat' 
-file_name_handle = open(file_name, "w")
+file_name_base   = str(location)  + '_' + str(file_date_time)
+file_name_base   = str(file_name_base) + '_HumidityTemperature_SensorData' 
+file_name_csv    = str(file_name_base) + '.csv' 
+file_name_dat    = str(file_name_base) + '.dat' 
+file_name_html   = str(file_name_base) + '.html' 
+file_name_pdf    = str(file_name_base) + '.pdf' 
+file_name_handle = open(file_name_dat, "w")
 
 # Function declarations
 
@@ -153,32 +157,40 @@ def read_record_rest_repeat(ds18b20):
 
   # Comment the print statements below to save some resoures, if need be
   print("")
-  print("# Filename  : %s" % (file_name))
+  print("# Filename  : %s" % (file_name_dat))
   print("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)")
   print("# Sensor ID : %s" % sensor_id)
   print("# Format    : Counter, Sensor ID, Time Stamp, Celsius, Fahrenheit")
   print("#             Fields are separated by the | character")
   print("#")
-  print("# Upon successful completion, the recording may be viewed at")
-  print("# %s/%s" % (remote_website, file_name))
+  print("# Upon successful completion (of post-processing), the relevant files may be viewed at")
+  print("# %s/%s" % (remote_website, file_name_dat))
+  print("# %s/%s" % (remote_website, file_name_csv))
+  print("# %s/%s" % (remote_website, file_name_html))
+  print("# %s/%s" % (remote_website, file_name_pdf))
   print("#")
-  print("# and under the RaspberryPi folder at the following public GitHub repository")
+  print("# The same files are available at the following public GitHub repository under the")
+  print("# RaspberryPi folder")
   print("# %s" % (github_repo))
   print("")
   print("")
 
   # Header information (entered as comments)
   file_name_handle.write("#\n")
-  file_name_handle.write("# Filename  : %s\n" % (file_name))
+  file_name_handle.write("# Filename  : %s\n" % (file_name_dat))
   file_name_handle.write("# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)\n")
   file_name_handle.write("# Sensor ID : %s\n" % sensor_id)
   file_name_handle.write("# Format    : Counter, Sensor ID, Time Stamp, Celsius, Fahrenheit\n")
   file_name_handle.write("#             Fields are separated by the | character\n")
   file_name_handle.write("#\n")
-  file_name_handle.write("# Upon successful completion, the file may be viewed at\n")
-  file_name_handle.write("# %s/%s\n" % (remote_website, file_name))
+  file_name_handle.write("# Upon successful completion (of post-processing), the relevant files may be viewed at\n")
+  file_name_handle.write("# %s/%s\n" % (remote_website, file_name_dat))
+  file_name_handle.write("# %s/%s\n" % (remote_website, file_name_csv))
+  file_name_handle.write("# %s/%s\n" % (remote_website, file_name_html))
+  file_name_handle.write("# %s/%s\n" % (remote_website, file_name_pdf))
   file_name_handle.write("#\n")
-  file_name_handle.write("# and at the following public GitHub repository\n")
+  file_name_handle.write("# The same files are available at the following public GitHub repository under the\n")
+  file_name_handle.write("# RaspberryPi folder\n")
   file_name_handle.write("# %s\n" % (github_repo))
   file_name_handle.write("#\n")
 
@@ -224,9 +236,9 @@ def read_record_rest_repeat(ds18b20):
         # Close the file
         file_name_handle.close()
 
-        # Archive the file_name to a designated remote server after updating
+        # Archive the file_name_dat to a designated remote server after updating
         # its timestamp
-        archive_recorded_data(file_name, file_date_time, remote_details)
+        archive_recorded_data(file_name_dat, file_date_time, remote_details)
 
         # Terminate the program
         quit()
@@ -236,19 +248,19 @@ def read_record_rest_repeat(ds18b20):
 
 # Transfer the file (with recorded measurements) to the designated remote
 # server for archival and post-processing purposes
-def archive_recorded_data(file_name, file_date_time, remote_details):
+def archive_recorded_data(file_name_dat, file_date_time, remote_details):
 
-  # Change the file_name's timestamp to file_date_time
-  os.system('touch -t %s %s' % (file_date_time, file_name))
+  # Change the file_name_dat's timestamp to file_date_time
+  os.system('touch -t %s %s' % (file_date_time, file_name_dat))
 
-  # Transfer the file_name to a designated remote server for archival and
+  # Transfer the file_name_dat to a designated remote server for archival and
   # post-processing purposes. The second and third rsync commands do not
   # transfer anything unless the first (or second) rsync command transferred
   # partial data for some reason (e.g., network issues, etc.)
   # TODO: Make '-ae' to '-ave' to make the output non-verbose
-  os.system('rsync -ae ssh -hPz %s %s' % (file_name, remote_details))
-  os.system('rsync -ae ssh -hPz %s %s' % (file_name, remote_details))
-  os.system('rsync -ae ssh -hPz %s %s' % (file_name, remote_details))
+  os.system('rsync -ae ssh -hPz %s %s' % (file_name_dat, remote_details))
+  os.system('rsync -ae ssh -hPz %s %s' % (file_name_dat, remote_details))
+  os.system('rsync -ae ssh -hPz %s %s' % (file_name_dat, remote_details))
 
   # Sleep for 1 second
   time.sleep(1)
@@ -270,7 +282,7 @@ if __name__ == '__main__':
 
     # Archive the file to a designated remote server after updating its
     # timestamp
-    archive_recorded_data(file_name, file_date_time, remote_details)
+    archive_recorded_data(file_name_dat, file_date_time, remote_details)
 
     # Terminate the program
     quit()
