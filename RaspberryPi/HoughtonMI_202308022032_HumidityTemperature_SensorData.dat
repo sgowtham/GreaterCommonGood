@@ -1,0 +1,18 @@
+#
+# Filename  : HoughtonMI_202308022032_HumidityTemperature_SensorData.dat
+# Sensor    : DS18B20 w/ Raspberry Pi 3 Model B V1.2 (circa 2015)
+# Sensor ID : 28-030497940a6a
+# Format    : Counter, Sensor ID, Time Stamp, Celsius, Fahrenheit
+#             Fields are separated by the | character
+#
+# Upon successful completion (of post-processing), the relevant files may be viewed at
+# https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202308022032_HumidityTemperature_SensorData.dat
+# https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202308022032_HumidityTemperature_SensorData.csv
+# https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202308022032_HumidityTemperature_SensorData.html
+# https://sgowtham.com/assets/RaspberryPi/HoughtonMI_202308022032_HumidityTemperature_SensorData.pdf
+#
+# The same files are available at the following public GitHub repository under the
+# RaspberryPi folder
+# https://github.com/sgowtham/GreaterCommonGood/
+#
+0001|28-030497940a6a|2023-08-02 20:32:42|014.250|057.650

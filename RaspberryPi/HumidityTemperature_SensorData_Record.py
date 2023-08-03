@@ -29,7 +29,7 @@
 # post-processing purposes. The setup assumes that passwordless data transfer
 # is configured/enabled between the Raspberry Pi and remote server using the 
 # SSH keys
-sleep_timer     = 55
+sleep_timer     = 5
 remote_username = "sgowtham"
 remote_server   = "sgowtham.com"
 remote_folder   = "/var/www/sgowtham/assets/RaspberryPi/"
